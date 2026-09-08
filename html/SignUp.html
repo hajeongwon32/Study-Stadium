@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Stadium 회원가입</title>
+    <link rel="stylesheet" href="../css/Login.css">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="login-card signup-card" aria-labelledby="page-title">
+            <header class="intro">
+                <a class="circle-button back-button" href="Login.html" aria-label="로그인 페이지로 돌아가기">←</a>
+                <span class="ball-mark" aria-hidden="true">⚽</span>
+                <div class="intro-copy">
+                    <h1 id="page-title">STUDY STADIUM</h1>
+                    <p>선수 입장 &amp; 라커룸 등록 가이드</p>
+                </div>
+            </header>
+
+            <div class="login-panel">
+                <nav class="tabs" aria-label="계정 메뉴">
+                    <a class="tab tab-link" href="Login.html">로그인</a>
+                    <a class="tab tab-link active" href="SignUp.html" aria-current="page">회원가입</a>
+                </nav>
+
+                <form class="login-form signup-form">
+                    <div class="field-group">
+                        <label for="signup-name"><span class="field-icon" aria-hidden="true">♙</span> 선수 이름</label>
+                        <div class="name-check-row">
+                            <div class="input-wrap">
+                                <input id="signup-name" type="text" placeholder="이름 입력" autocomplete="name" required>
+                            </div>
+                            <button class="check-name-button" type="button">중복 확인</button>
+                        </div>
+                        <p class="name-status" aria-live="polite"></p>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="signup-password"><span class="field-icon" aria-hidden="true">⚿</span> 라커룸 비밀번호</label>
+                        <div class="input-wrap">
+                            <input id="signup-password" type="password" placeholder="비밀번호 입력" autocomplete="new-password" required>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <a class="cancel-button action-link" href="Login.html">취소</a>
+                        <button class="submit-button" type="submit"><span aria-hidden="true">⚽</span> 선수 등록하기</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <footer class="page-footer"><span aria-hidden="true">▣</span> STUDY STADIUM OFFICIAL SECURED LOCKER ROOM</footer>
+    </main>
+
+    <script>
+        const signupForm = document.querySelector('.signup-form');
+        const nameInput = document.querySelector('#signup-name');
+        const checkNameButton = document.querySelector('.check-name-button');
+        const nameStatus = document.querySelector('.name-status');
+        const registeredNamesKey = 'studyStadiumPlayerNames';
+        let isNameAvailable = false;
+        let checkedName = '';
+
+        const normalizeName = (name) => name.trim().replace(/\s+/g, ' ').toLowerCase();
+
+        checkNameButton.addEventListener('click', () => {
+            const name = normalizeName(nameInput.value);
+            const registeredNames = JSON.parse(localStorage.getItem(registeredNamesKey) || '[]');
+
+            if (!name) {
+                nameStatus.textContent = '선수 이름을 입력해 주세요.';
+                nameStatus.className = 'name-status error';
+                isNameAvailable = false;
+                return;
+            }
+
+            if (registeredNames.includes(name)) {
+                nameStatus.textContent = '이미 등록된 선수 이름입니다.';
+                nameStatus.className = 'name-status error';
+                isNameAvailable = false;
+                return;
+            }
+
+            checkedName = name;
+            isNameAvailable = true;
+            nameStatus.textContent = '사용 가능한 선수 이름입니다.';
+            nameStatus.className = 'name-status success';
+        });
+
+        nameInput.addEventListener('input', () => {
+            if (normalizeName(nameInput.value) !== checkedName) {
+                isNameAvailable = false;
+                nameStatus.textContent = '';
+                nameStatus.className = 'name-status';
+            }
+        });
+
+        signupForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            if (!isNameAvailable || normalizeName(nameInput.value) !== checkedName) {
+                nameStatus.textContent = '선수 이름 중복 확인을 먼저 해주세요.';
+                nameStatus.className = 'name-status error';
+                return;
+            }
+
+            const registeredNames = JSON.parse(localStorage.getItem(registeredNamesKey) || '[]');
+            localStorage.setItem(registeredNamesKey, JSON.stringify([...registeredNames, checkedName]));
+            nameStatus.textContent = '선수 등록이 완료되었습니다.';
+            nameStatus.className = 'name-status success';
+            signupForm.reset();
+            isNameAvailable = false;
+            checkedName = '';
+        });
+    </script>
+</body>
+</html>
