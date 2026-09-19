@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Stadium 로그인</title>
     <link rel="stylesheet" href="../css/Login.css">
+    <script type="module" src="../js/Login.js"></script>
 </head>
 <body>
     <main class="page-shell">
         <section class="login-card" aria-labelledby="page-title">
             <header class="intro">
-                <button class="circle-button back-button" type="button" aria-label="이전 페이지로 이동">←</button>
+                <button id="back-button" class="circle-button back-button" type="button" aria-label="이전 페이지로 이동">←</button>
                 <span class="ball-mark" aria-hidden="true">⚽</span>
                 <div class="intro-copy">
                     <h1 id="page-title">STUDY STADIUM</h1>
@@ -28,7 +29,7 @@
                     <div class="field-group">
                         <label for="user-id"><span class="field-icon" aria-hidden="true">♙</span> 선수 ID / 이메일</label>
                         <div class="input-wrap">
-                            <input id="user-id" type="text" placeholder="아이디 또는 이메일 입력" autocomplete="username">
+                            <input id="user-id" type="text" placeholder="아이디 또는 이메일 입력" autocomplete="username" required>
                             <span class="input-icon" aria-hidden="true">⚿</span>
                         </div>
                     </div>
@@ -36,8 +37,8 @@
                     <div class="field-group">
                         <label for="user-password"><span class="field-icon" aria-hidden="true">⚿</span> 라커룸 비밀번호 (PW)</label>
                         <div class="input-wrap">
-                            <input id="user-password" type="password" placeholder="비밀번호 입력" autocomplete="current-password">
-                            <button class="password-toggle" type="button" aria-label="비밀번호 표시">◉</button>
+                            <input id="user-password" type="password" placeholder="비밀번호 입력" autocomplete="current-password" required>
+                            <button id="password-toggle" class="password-toggle" type="button" aria-label="비밀번호 표시">◉</button>
                         </div>
                     </div>
 
@@ -57,11 +58,5 @@
 
         <footer class="page-footer"><span aria-hidden="true">▣</span> STUDY STADIUM OFFICIAL SECURED LOCKER ROOM</footer>
     </main>
-    <script>
-        document.querySelector('#login-form').addEventListener('submit', (event) => {
-            event.preventDefault();
-            window.location.href = 'Match.html';
-        });
-    </script>
 </body>
 </html>

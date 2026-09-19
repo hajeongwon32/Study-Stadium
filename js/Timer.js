@@ -1,9 +1,18 @@
+import { supabase } from './lib/supabaseClient.js';
+
+const { data: { session } } = await supabase.auth.getSession();
+
+if (!session) {
+    window.location.replace('Login.html');
+    throw new Error('로그인이 필요합니다.');
+}
+
 /* =========================
            타이머 기본 설정
         ========================= */
-        const STUDY_SECONDS = 10; // 테스트용 시간 설정
-        const HYDRATION_BREAK_SECONDS = 8;
-        const HALF_TIME_SECONDS = 9;
+        const STUDY_SECONDS = 25 * 60;
+        const HYDRATION_BREAK_SECONDS = 5 * 60;
+        const HALF_TIME_SECONDS = 10 * 60;
 
         /* =========================
            현재 경기 상태
@@ -14,6 +23,7 @@
         let nextSet = 0;
         let remainingSeconds = STUDY_SECONDS;
         let timerId = null;
+        let timerEndTime = null;
         let isMatchFinished = false;
 
         /* =========================
@@ -23,6 +33,7 @@
         const timerProgress = document.querySelector('#timer-progress');
         const timerStatus = document.querySelector('#timer-status');
         const toggleTimerButton = document.querySelector('#toggle-timer');
+        const logoutButton = document.querySelector('#logout-button');
         const modeLabel = document.querySelector('#mode-label');
         const timerTitleText = document.querySelector('#timer-title-text');
         const breakStepTitle = document.querySelector('#break-step-title');
@@ -254,11 +265,12 @@
         ========================= */
         const startTimer = () => {
             clearInterval(timerId);
+            timerEndTime = Date.now() + remainingSeconds * 1000;
             timerId = setInterval(() => {
-                if (remainingSeconds <= 1) {
-                    remainingSeconds = 0;
-                    renderTimer();
+                remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
+                renderTimer();
 
+                if (remainingSeconds === 0) {
                     if (mode === 'study') {
                         finishStudySet();
                     } else {
@@ -277,8 +289,11 @@
         ========================= */
         toggleTimerButton.addEventListener('click', () => {
             if (timerId) {
+                remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
                 clearInterval(timerId);
                 timerId = null;
+                timerEndTime = null;
+                renderTimer();
                 timerStatus.textContent = '타이머가 일시정지되었습니다.';
                 toggleTimerButton.textContent = '▶  계속하기';
             } else {
@@ -289,6 +304,19 @@
                     timerStatus.textContent = '휴식 시간이 진행 중입니다.';
                 }
             }
+        });
+
+        logoutButton.addEventListener('click', async () => {
+            logoutButton.disabled = true;
+            const { error } = await supabase.auth.signOut();
+
+            if (error) {
+                logoutButton.disabled = false;
+                alert('로그아웃에 실패했습니다. 다시 시도해 주세요.');
+                return;
+            }
+
+            window.location.replace('Login.html');
         });
 
         /* =========================
