@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Stadium</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <div class="top-bar">
+      <header class="app-header">
+        <div class="titles">
+          <p class="eyebrow">STUDY STADIUM</p>
+          <h1 class="page-title">MY STUDY STADIUM</h1>
+        </div>
+        <div class="header-actions">
+          <button class="help-btn" id="settingsBtn" aria-label="설정">⚙</button>
+          <button class="help-btn" id="helpBtn" aria-label="도움말">?</button>
+        </div>
+      </header>
+
+      <!-- 월 네비게이터 -->
+      <nav class="date-nav" aria-label="월 이동">
+        <button class="icon-btn" id="prevMonthBtn" aria-label="이전 달">‹</button>
+        <span class="date-label" id="currentMonth">0000. 00</span>
+        <button class="icon-btn" id="nextMonthBtn" aria-label="다음 달">›</button>
+      </nav>
+    </div>
+
+    <main class="main-content">
+
+      <section class="card raised">
+        <h2 class="card-label">My Study Calendar</h2>
+
+        <div class="weekday-row">
+          <span class="sun">일</span>
+          <span>월</span>
+          <span>화</span>
+          <span>수</span>
+          <span>목</span>
+          <span>금</span>
+          <span>토</span>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+        </div>
+      </section>
+
+      <!-- 오늘의 경기 -->
+      <section class="card raised">
+        <h2 class="card-label">Today's Match</h2>
+
+        <div class="match-top">
+          <div class="match-next">
+            <p class="match-next-label">NEXT</p>
+            <p class="match-next-title" id="matchNextTitle">킥오프 준비 완료</p>
+            <p class="match-next-desc" id="matchNextDesc">버튼을 눌러 오늘의 경기를 시작해보세요</p>
+          </div>
+        </div>
+
+        <div class="match-progress-row">
+          <span>진행 상황</span>
+          <span id="matchProgressLabel">0 / 4 SETS</span>
+        </div>
+
+        <div class="set-segments" id="setSegments">
+          <span class="set-segment"></span>
+          <span class="set-segment"></span>
+          <span class="set-segment"></span>
+          <span class="set-segment"></span>
+        </div>
+
+        <div class="match-cta-row">
+          <button class="btn-kickoff" id="kickoffBtn">경기하러 가기</button>
+        </div>
+      </section>
+
+      <!-- 공부 일지 -->
+      <section class="card">
+        <h2 class="card-label">Study Note</h2>
+        <div class="note-row">
+          <textarea class="note-input" id="studyNote" placeholder="오늘 학습 내용을 입력해 주세요"></textarea>
+          <button class="btn-save" id="saveNoteBtn">저장</button>
+        </div>
+      </section>
+
+      <!-- 공부 통계 요약 -->
+      <section class="card">
+        <h2 class="card-label">Study Stats</h2>
+        <div class="stats-preview-grid">
+          <div class="stats-preview-item">
+            <div class="stats-preview-value" id="statTotalSets">0</div>
+            <div class="stats-preview-name">총 세트</div>
+          </div>
+          <div class="stats-preview-item">
+            <div class="stats-preview-value" id="statFocusTime">00H 00M</div>
+            <div class="stats-preview-name">집중 시간</div>
+          </div>
+          <div class="stats-preview-item">
+            <div class="stats-preview-value" id="statMatchDays">0</div>
+            <div class="stats-preview-name">매치 일수</div>
+          </div>
+          <div class="stats-preview-item">
+            <div class="stats-preview-value" id="statStreak">0</div>
+            <div class="stats-preview-name">연속 기록</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 메인 ↔ 통계 이동 -->
+    <nav class="tab-bar">
+      <a href="studyStadium_main.html" class="active">MY STADIUM</a>
+      <a href="studyStadium_stats.html">STUDY STATS</a>
+    </nav>
+
+    <!-- 용어 설명 팝업 -->
+    <div class="modal-overlay" id="helpOverlay" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="modal-head">
+          <h2 class="modal-title" id="helpTitle">축구 용어 설명</h2>
+          <button class="modal-close-x" id="helpCloseX" aria-label="닫기">✕</button>
+        </div>
+
+        <dl class="glossary-list">
+          <div class="glossary-item">
+            <div></div>
+            <div class="glossary-text">
+              <dt>KICK OFF</dt>
+              <dd>공부 시작</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <div></div>
+            <div class="glossary-text">
+              <dt>1 SET</dt>
+              <dd>설정한 시간만큼 집중 공부 (기본 50분)</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <div></div>
+            <div class="glossary-text">
+              <dt>브레이크</dt>
+              <dd>세트 사이 짧은 휴식 (기본 10분, 설정에서 조절 가능)</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <div></div>
+            <div class="glossary-text">
+              <dt>FULL TIME</dt>
+              <dd>4세트 완료, 오늘 경기(공부) 종료</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <span class="glossary-swatch soil"></span>
+            <div class="glossary-text">
+              <dt>흙</dt>
+              <dd>공부하지 않은 날</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <span class="glossary-swatch sprout"></span>
+            <div class="glossary-text">
+              <dt>싹</dt>
+              <dd>1세트 완료한 날</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <span class="glossary-swatch leaf"></span>
+            <div class="glossary-text">
+              <dt>잎</dt>
+              <dd>2~3세트 완료한 날</dd>
+            </div>
+          </div>
+          <div class="glossary-item">
+            <span class="glossary-swatch stadium"></span>
+            <div class="glossary-text">
+              <dt>구장</dt>
+              <dd>4세트 모두 완료한 날 (FULL TIME)</dd>
+            </div>
+          </div>
+        </dl>
+
+        <button class="btn-close-modal" id="helpCloseBtn">닫기</button>
+      </div>
+    </div>
+
+    <!-- 집중/휴식 시간 설정 팝업 -->
+    <div class="modal-overlay" id="settingsOverlay" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <div class="modal-head">
+          <h2 class="modal-title" id="settingsTitle">시간 설정</h2>
+          <button class="modal-close-x" id="settingsCloseX" aria-label="닫기">✕</button>
+        </div>
+
+        <div class="settings-field">
+          <label for="focusMinutesInput">집중 시간 (분)</label>
+          <input type="number" id="focusMinutesInput" min="1" max="180" step="1" value="50">
+        </div>
+        <div class="settings-field">
+          <label for="breakMinutesInput">휴식 시간 (분)</label>
+          <input type="number" id="breakMinutesInput" min="1" max="60" step="1" value="10">
+        </div>
+        <p class="card-sub">다음 세트 시작부터 적용돼요.</p>
+
+        <button class="btn-close-modal" id="settingsSaveBtn">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/studyStadium_data.js"></script>
+  <script src="../js/studyStadium_main.js"></script>
+</body>
+</html>
