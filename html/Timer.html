@@ -74,6 +74,7 @@
 
                 <!-- TIMER -->
                 <section class="timer-panel" aria-labelledby="timer-title">
+                    <button id="settingBtn" class="setting-button" type="button">시간 설정</button>
                     <h2 id="timer-title">
                         <span id="timer-title-text">FOCUS TIME REMAINING</span>
                     </h2>
@@ -85,6 +86,38 @@
                         집중 시간이 진행 중입니다.
                     </p>
                 </section>
+
+                <!-- 시간 설정 모달 -->
+                <div id="settingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="setting-title">
+                    <div class="modal-content">
+                        <h2 id="setting-title">시간 설정</h2>
+
+                        <label for="focusTime">집중 시간</label>
+                        <div class="setting-input">
+                            <input type="number" id="focusTime" min="1" max="90" value="25">
+                            <span>분</span>
+                        </div>
+
+                        <div class="modal-buttons">
+                            <button id="cancelBtn" class="modal-cancel" type="button">취소</button>
+                            <button id="saveBtn" class="modal-save" type="button">저장</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 경기 종료 확인 모달 -->
+                <div id="finishModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="finish-title">
+                    <div class="modal-content finish-modal-content">
+                        <div class="finish-modal-icon" aria-hidden="true">!</div>
+                        <h2 id="finish-title">오늘은 여기까지 할까요?</h2>
+                        <p class="finish-modal-message">현재 세트를 종료하고<br>오늘의 공부 기록을 저장합니다.</p>
+
+                        <div class="modal-buttons">
+                            <button id="finishCancelBtn" class="modal-cancel" type="button">계속하기</button>
+                            <button id="finishConfirmBtn" class="modal-finish" type="button">종료하기</button>
+                        </div>
+                    </div>
+                </div>
                 <!-- TIP -->
                 <aside class="break-tip">
                     <span class="tip-icon" aria-hidden="true">♧</span>
@@ -97,7 +130,10 @@
                 <!-- BUTTON -->
                 <div class="timer-actions">
                     <button id="toggle-timer" class="primary-action" type="button">
-                        Ⅱ&nbsp; 일시정지
+                        ▶&nbsp; 시작
+                    </button>
+                    <button id="finish-today" class="finish-action" type="button">
+                        오늘은 여기까지
                     </button>
                 </div>
 

@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
       isNicknameChecked = false;
       if (checkMsg) {
         checkMsg.innerText = "";
-        checkMsg.className = "check-message";
+        checkMsg.className = "name-status";
       }
     });
   }
@@ -42,10 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isDuplicate) {
           checkMsg.innerText = "이미 등록된 선수 이름입니다.";
+          checkMsg.className = "name-status error";
           checkMsg.style.color = "#ff4d4d";
           isNicknameChecked = false;
         } else {
           checkMsg.innerText = "출전 가능한 선수 이름입니다!";
+          checkMsg.className = "name-status success";
           checkMsg.style.color = "#00e676";
           isNicknameChecked = true;
         }

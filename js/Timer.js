@@ -1,4 +1,5 @@
 import { supabase } from './lib/supabaseClient.js';
+import { addStudySetRecord, getTodayStudyRecord } from './services/recordService.js';
 
 const { data: { session } } = await supabase.auth.getSession();
 
@@ -10,7 +11,7 @@ if (!session) {
 /* =========================
            타이머 기본 설정
         ========================= */
-        const STUDY_SECONDS = 25 * 60;
+        let focusSeconds = 25 * 60;
         const HYDRATION_BREAK_SECONDS = 5 * 60;
         const HALF_TIME_SECONDS = 10 * 60;
 
@@ -21,10 +22,11 @@ if (!session) {
         let mode = 'study';
         let breakType = 'hydration';
         let nextSet = 0;
-        let remainingSeconds = STUDY_SECONDS;
+        let remainingSeconds = focusSeconds;
         let timerId = null;
         let timerEndTime = null;
         let isMatchFinished = false;
+        let hasStartedCurrentSet = false;
 
         /* =========================
            HTML 요소 가져오기
@@ -33,6 +35,7 @@ if (!session) {
         const timerProgress = document.querySelector('#timer-progress');
         const timerStatus = document.querySelector('#timer-status');
         const toggleTimerButton = document.querySelector('#toggle-timer');
+        const finishTodayButton = document.querySelector('#finish-today');
         const logoutButton = document.querySelector('#logout-button');
         const modeLabel = document.querySelector('#mode-label');
         const timerTitleText = document.querySelector('#timer-title-text');
@@ -41,6 +44,23 @@ if (!session) {
         const tipDescription = document.querySelector('#tip-description');
         const progressSteps = document.querySelectorAll('.progress-step');
         const progressLineFill = document.querySelector('#progress-line-fill');
+        const settingButton = document.querySelector('#settingBtn');
+        const settingModal = document.querySelector('#settingModal');
+        const focusTimeInput = document.querySelector('#focusTime');
+        const cancelButton = document.querySelector('#cancelBtn');
+        const saveButton = document.querySelector('#saveBtn');
+        const finishModal = document.querySelector('#finishModal');
+        const finishCancelButton = document.querySelector('#finishCancelBtn');
+        const finishConfirmButton = document.querySelector('#finishConfirmBtn');
+
+        const updateSettingAvailability = () => {
+            const isLocked = isMatchFinished || (mode === 'study' && hasStartedCurrentSet);
+            settingButton.disabled = isLocked;
+            settingButton.setAttribute('aria-disabled', String(isLocked));
+            finishTodayButton.disabled = isMatchFinished || mode !== 'study' || !hasStartedCurrentSet;
+
+            if (isLocked) closeSettingModal();
+        };
 
         /* =========================
            5초 알람음 재생 함수 (Web Audio API)
@@ -92,7 +112,7 @@ if (!session) {
             timer.textContent = formatTime(remainingSeconds);
             timer.dateTime = `PT${Math.floor(remainingSeconds / 60)}M${remainingSeconds % 60}S`;
 
-            const totalSeconds = mode === 'study' ? STUDY_SECONDS : breakType === 'halftime' ? HALF_TIME_SECONDS : HYDRATION_BREAK_SECONDS;
+            const totalSeconds = mode === 'study' ? focusSeconds : breakType === 'halftime' ? HALF_TIME_SECONDS : HYDRATION_BREAK_SECONDS;
             const progress = (remainingSeconds / totalSeconds) * 100;
             timerProgress.style.width = `${progress}%`;
         };
@@ -165,7 +185,9 @@ if (!session) {
             if (mode === 'study') {
                 modeLabel.textContent = `${currentSet}SET`;
                 timerTitleText.textContent = 'FOCUS TIME REMAINING';
-                timerStatus.textContent = `${currentSet}SET 집중 시간이 진행 중입니다.`;
+                timerStatus.textContent = hasStartedCurrentSet
+                    ? `${currentSet}SET 집중 시간이 진행 중입니다.`
+                    : '시작 버튼을 눌러 집중을 시작하세요.';
                 tipTitle.textContent = `${currentSet}SET에 집중해보세요!`;
                 tipDescription.textContent = '집중 시간을 완료하면 다음 단계로 이동합니다.';
             } else if (mode === 'break') {
@@ -183,16 +205,44 @@ if (!session) {
 
             updateProgress();
             renderTimer();
+            updateSettingAvailability();
+        };
+
+        const saveCurrentSetRecord = async (focusMinutes) => {
+            try {
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
+                if (userError || !user) {
+                    throw new Error('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
+                }
+
+                await addStudySetRecord({ userId: user.id, focusMinutes });
+                return true;
+            } catch (error) {
+                console.error('세트 기록 저장 실패:', error);
+                alert(`세트 기록 저장에 실패했습니다.\n${error.message}`);
+                return false;
+            }
         };
 
         /* =========================
            SET 종료
         ========================= */
-        const finishStudySet = () => {
+        const finishStudySet = async () => {
             clearInterval(timerId);
             timerId = null;
+            toggleTimerButton.disabled = true;
+            finishTodayButton.disabled = true;
+
+            const saved = await saveCurrentSetRecord(Math.round(focusSeconds / 60));
+            if (!saved) {
+                toggleTimerButton.disabled = false;
+                finishTodayButton.disabled = false;
+                toggleTimerButton.textContent = '▶  계속하기';
+                return;
+            }
 
             playAlarm5Sec(); // 5초 알람 실행
+            hasStartedCurrentSet = false;
 
             if (currentSet === 1) {
                 mode = 'break'; breakType = 'hydration'; nextSet = 2;
@@ -231,7 +281,8 @@ if (!session) {
 
             mode = 'study';
             currentSet = nextSet;
-            remainingSeconds = STUDY_SECONDS;
+            remainingSeconds = focusSeconds;
+            hasStartedCurrentSet = true;
             timerStatus.textContent = `휴식 종료! ${currentSet}SET을 시작합니다.`;
             
             updateScreen();
@@ -256,8 +307,10 @@ if (!session) {
             
             toggleTimerButton.textContent = '✓ 경기 종료';
             toggleTimerButton.disabled = true;
+            finishTodayButton.disabled = true;
 
             updateProgress();
+            updateSettingAvailability();
         };
 
         /* =========================
@@ -265,6 +318,7 @@ if (!session) {
         ========================= */
         const startTimer = () => {
             clearInterval(timerId);
+            if (mode === 'study') hasStartedCurrentSet = true;
             timerEndTime = Date.now() + remainingSeconds * 1000;
             timerId = setInterval(() => {
                 remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
@@ -281,7 +335,9 @@ if (!session) {
                 remainingSeconds--;
                 renderTimer();
             }, 1000);
+            toggleTimerButton.disabled = false;
             toggleTimerButton.textContent = 'Ⅱ  일시정지';
+            updateSettingAvailability();
         };
 
         /* =========================
@@ -306,6 +362,104 @@ if (!session) {
             }
         });
 
+        finishTodayButton.addEventListener('click', async () => {
+            if (isMatchFinished || mode !== 'study' || finishTodayButton.disabled) return;
+
+            const shouldFinishToday = await requestFinishConfirmation();
+            if (!shouldFinishToday) return;
+
+            if (timerId) {
+                remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
+                clearInterval(timerId);
+                timerId = null;
+                timerEndTime = null;
+            }
+
+            finishTodayButton.disabled = true;
+            toggleTimerButton.disabled = true;
+
+            const elapsedMinutes = Math.max(1, Math.floor((focusSeconds - remainingSeconds) / 60));
+            const saved = await saveCurrentSetRecord(elapsedMinutes);
+
+            if (!saved) {
+                finishTodayButton.disabled = false;
+                toggleTimerButton.disabled = false;
+                toggleTimerButton.textContent = '▶  계속하기';
+                return;
+            }
+
+            finishMatch();
+        });
+
+        const requestFinishConfirmation = () => new Promise((resolve) => {
+            finishModal.classList.add('is-open');
+
+            const close = (confirmed) => {
+                finishModal.classList.remove('is-open');
+                finishConfirmButton.removeEventListener('click', confirm);
+                finishCancelButton.removeEventListener('click', cancel);
+                finishModal.removeEventListener('click', handleBackdropClick);
+                document.removeEventListener('keydown', handleKeydown);
+                resolve(confirmed);
+            };
+            const confirm = () => close(true);
+            const cancel = () => close(false);
+            const handleBackdropClick = (event) => {
+                if (event.target === finishModal) cancel();
+            };
+            const handleKeydown = (event) => {
+                if (event.key === 'Escape') cancel();
+            };
+
+            finishConfirmButton.addEventListener('click', confirm);
+            finishCancelButton.addEventListener('click', cancel);
+            finishModal.addEventListener('click', handleBackdropClick);
+            document.addEventListener('keydown', handleKeydown);
+            finishConfirmButton.focus();
+        });
+
+        const closeSettingModal = () => {
+            settingModal.classList.remove('is-open');
+        };
+
+        settingButton.addEventListener('click', () => {
+            focusTimeInput.value = Math.round(focusSeconds / 60);
+            settingModal.classList.add('is-open');
+            focusTimeInput.focus();
+            focusTimeInput.select();
+        });
+
+        cancelButton.addEventListener('click', closeSettingModal);
+
+        settingModal.addEventListener('click', (event) => {
+            if (event.target === settingModal) closeSettingModal();
+        });
+
+        saveButton.addEventListener('click', () => {
+            const minutes = Number(focusTimeInput.value);
+
+            if (!Number.isInteger(minutes) || minutes < 1 || minutes > 90) {
+                focusTimeInput.reportValidity();
+                return;
+            }
+
+            focusSeconds = minutes * 60;
+
+            if (mode === 'study') {
+                remainingSeconds = focusSeconds;
+                renderTimer();
+                if (timerId) startTimer();
+            }
+
+            closeSettingModal();
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && settingModal.classList.contains('is-open')) {
+                closeSettingModal();
+            }
+        });
+
         logoutButton.addEventListener('click', async () => {
             logoutButton.disabled = true;
             const { error } = await supabase.auth.signOut();
@@ -322,5 +476,19 @@ if (!session) {
         /* =========================
            처음 실행
         ========================= */
-        updateScreen();
-        startTimer();
+        const initializeTimer = async () => {
+            const todayRecord = await getTodayStudyRecord(session.user.id);
+
+            if (todayRecord) {
+                finishMatch();
+                return;
+            }
+
+            updateScreen();
+        };
+
+        initializeTimer().catch((error) => {
+            console.error('오늘 기록 확인 실패:', error);
+            alert(`오늘 기록을 확인하지 못했습니다.\n${error.message}`);
+            updateScreen();
+        });
