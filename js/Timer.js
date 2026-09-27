@@ -1,5 +1,5 @@
 import { supabase } from './lib/supabaseClient.js';
-import { addStudySetRecord, getTodayStudyRecord } from './services/recordService.js';
+import { addStudySetRecord, getTodayStudyRecord, saveStudyNote } from './services/recordService.js';
 
 const { data: { session } } = await supabase.auth.getSession();
 
@@ -27,6 +27,7 @@ if (!session) {
         let timerEndTime = null;
         let isMatchFinished = false;
         let hasStartedCurrentSet = false;
+        let currentNote = '';
 
         /* =========================
            HTML 요소 가져오기
@@ -52,7 +53,12 @@ if (!session) {
         const finishModal = document.querySelector('#finishModal');
         const finishCancelButton = document.querySelector('#finishCancelBtn');
         const finishConfirmButton = document.querySelector('#finishConfirmBtn');
+        const noteModal = document.querySelector('#noteModal');
+        const studyNoteInput = document.querySelector('#studyNoteInput');
+        const noteCancelButton = document.querySelector('#noteCancelBtn');
+        const noteSaveButton = document.querySelector('#noteSaveBtn');
 
+        // 경기 상태에 따라 시간 설정 및 종료 버튼의 사용 가능 여부를 갱신합니다.
         const updateSettingAvailability = () => {
             const isLocked = isMatchFinished || (mode === 'study' && hasStartedCurrentSet);
             settingButton.disabled = isLocked;
@@ -65,6 +71,7 @@ if (!session) {
         /* =========================
            5초 알람음 재생 함수 (Web Audio API)
         ========================= */
+          // 세트 또는 브레이크가 끝날 때 5초 알람음을 재생합니다.
         const playAlarm5Sec = () => {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -99,6 +106,7 @@ if (!session) {
         /* =========================
            시간 표시
         ========================= */
+          // 초 단위 시간을 MM:SS 형식으로 변환합니다.
         const formatTime = (seconds) => {
             const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
             const remainder = (seconds % 60).toString().padStart(2, '0');
@@ -108,6 +116,7 @@ if (!session) {
         /* =========================
            타이머 게이지 화면 업데이트
         ========================= */
+          // 남은 시간과 진행률을 타이머 화면에 표시합니다.
         const renderTimer = () => {
             timer.textContent = formatTime(remainingSeconds);
             timer.dateTime = `PT${Math.floor(remainingSeconds / 60)}M${remainingSeconds % 60}S`;
@@ -120,6 +129,7 @@ if (!session) {
         /* =========================
            SET 진행 UI 및 초록선 색상 업데이트
         ========================= */
+          // 현재 세트 진행 상태에 맞춰 단계 표시를 갱신합니다.
         const updateProgress = () => {
             const step1 = document.querySelector('.progress-step[data-step="1"]');
             const step2 = document.querySelector('.progress-step[data-step="2"]');
@@ -181,6 +191,7 @@ if (!session) {
         /* =========================
            화면 내용 업데이트
         ========================= */
+          // 집중 모드 또는 브레이크 모드에 맞춰 화면 문구를 갱신합니다.
         const updateScreen = () => {
             if (mode === 'study') {
                 modeLabel.textContent = `${currentSet}SET`;
@@ -208,6 +219,7 @@ if (!session) {
             updateSettingAvailability();
         };
 
+        // 완료된 세트의 집중 시간을 오늘 기록에 저장합니다.
         const saveCurrentSetRecord = async (focusMinutes) => {
             try {
                 const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -227,6 +239,7 @@ if (!session) {
         /* =========================
            SET 종료
         ========================= */
+          // 집중 세트를 종료하고 기록 저장 후 다음 브레이크로 이동합니다.
         const finishStudySet = async () => {
             clearInterval(timerId);
             timerId = null;
@@ -273,6 +286,7 @@ if (!session) {
         /* =========================
            브레이크 종료
         ========================= */
+          // 브레이크를 종료하고 다음 집중 세트를 시작합니다.
         const finishBreak = () => {
             clearInterval(timerId);
             timerId = null;
@@ -292,6 +306,7 @@ if (!session) {
         /* =========================
            경기 종료
         ========================= */
+          // 오늘의 경기를 종료하고 노트 작성 버튼을 표시합니다.
         const finishMatch = () => {
             clearInterval(timerId);
             timerId = null;
@@ -305,8 +320,8 @@ if (!session) {
             tipTitle.textContent = '오늘의 공부를 완료했습니다!';
             tipDescription.textContent = '수고하셨습니다. 오늘의 기록이 저장됩니다.';
             
-            toggleTimerButton.textContent = '✓ 경기 종료';
-            toggleTimerButton.disabled = true;
+            toggleTimerButton.textContent = currentNote ? '✎ 오늘의 노트 수정' : '✎ 오늘의 노트 작성';
+            toggleTimerButton.disabled = false;
             finishTodayButton.disabled = true;
 
             updateProgress();
@@ -316,6 +331,7 @@ if (!session) {
         /* =========================
            타이머 시작
         ========================= */
+          // 현재 모드의 타이머를 시작하거나 다시 시작합니다.
         const startTimer = () => {
             clearInterval(timerId);
             if (mode === 'study') hasStartedCurrentSet = true;
@@ -343,15 +359,23 @@ if (!session) {
         /* =========================
            일시정지 / 계속하기
         ========================= */
+          // 실행 중인 타이머를 즉시 멈추고 현재 남은 시간을 확정합니다.
+        const pauseTimer = () => {
+            if (!timerId) return;
+
+            remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
+            clearInterval(timerId);
+            timerId = null;
+            timerEndTime = null;
+            renderTimer();
+            timerStatus.textContent = '타이머가 일시정지되었습니다.';
+            toggleTimerButton.textContent = '▶  계속하기';
+        };
+
         toggleTimerButton.addEventListener('click', () => {
+            if (isMatchFinished) return;
             if (timerId) {
-                remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
-                clearInterval(timerId);
-                timerId = null;
-                timerEndTime = null;
-                renderTimer();
-                timerStatus.textContent = '타이머가 일시정지되었습니다.';
-                toggleTimerButton.textContent = '▶  계속하기';
+                pauseTimer();
             } else {
                 startTimer();
                 if (mode === 'study') {
@@ -362,18 +386,25 @@ if (!session) {
             }
         });
 
-        finishTodayButton.addEventListener('click', async () => {
+        // 입력한 노트를 오늘 공부 기록에 저장하거나 수정합니다.
+        const saveNote = async () => {
+            try {
+                currentNote = studyNoteInput.value.trim();
+                await saveStudyNote({ userId: session.user.id, note: currentNote });
+                closeNoteModal();
+                return true;
+            } catch (error) {
+                console.error('공부 노트 저장 실패:', error);
+                alert(`공부 노트 저장에 실패했습니다.\n${error.message}`);
+                return false;
+            }
+        };
+
+        // 현재 세트 기록과 노트를 저장한 뒤 오늘 경기를 종료합니다.
+        const finishTodayWithNote = async () => {
             if (isMatchFinished || mode !== 'study' || finishTodayButton.disabled) return;
 
-            const shouldFinishToday = await requestFinishConfirmation();
-            if (!shouldFinishToday) return;
-
-            if (timerId) {
-                remainingSeconds = Math.max(0, Math.ceil((timerEndTime - Date.now()) / 1000));
-                clearInterval(timerId);
-                timerId = null;
-                timerEndTime = null;
-            }
+            pauseTimer();
 
             finishTodayButton.disabled = true;
             toggleTimerButton.disabled = true;
@@ -388,36 +419,50 @@ if (!session) {
                 return;
             }
 
+            const noteSaved = await saveNote();
+            if (!noteSaved) {
+                finishTodayButton.disabled = false;
+                toggleTimerButton.disabled = false;
+                toggleTimerButton.textContent = '▶  계속하기';
+                return;
+            }
             finishMatch();
+        };
+
+        finishTodayButton.addEventListener('click', () => {
+            pauseTimer();
+            openNoteModal(finishTodayWithNote);
+        });
+        toggleTimerButton.addEventListener('click', () => {
+            if (isMatchFinished) openNoteModal(saveNote);
         });
 
-        const requestFinishConfirmation = () => new Promise((resolve) => {
-            finishModal.classList.add('is-open');
+        let noteSubmitAction = null;
 
-            const close = (confirmed) => {
-                finishModal.classList.remove('is-open');
-                finishConfirmButton.removeEventListener('click', confirm);
-                finishCancelButton.removeEventListener('click', cancel);
-                finishModal.removeEventListener('click', handleBackdropClick);
-                document.removeEventListener('keydown', handleKeydown);
-                resolve(confirmed);
-            };
-            const confirm = () => close(true);
-            const cancel = () => close(false);
-            const handleBackdropClick = (event) => {
-                if (event.target === finishModal) cancel();
-            };
-            const handleKeydown = (event) => {
-                if (event.key === 'Escape') cancel();
-            };
+        // 노트 입력 모달을 열고 저장 후 실행할 동작을 등록합니다.
+        const openNoteModal = (submitAction) => {
+            noteSubmitAction = submitAction;
+            studyNoteInput.value = currentNote;
+            noteSaveButton.textContent = isMatchFinished ? '수정 저장' : '저장하고 종료';
+            noteModal.classList.add('is-open');
+            studyNoteInput.focus();
+        };
 
-            finishConfirmButton.addEventListener('click', confirm);
-            finishCancelButton.addEventListener('click', cancel);
-            finishModal.addEventListener('click', handleBackdropClick);
-            document.addEventListener('keydown', handleKeydown);
-            finishConfirmButton.focus();
+        // 노트 입력 모달을 닫습니다.
+        const closeNoteModal = () => {
+            noteModal.classList.remove('is-open');
+            noteSubmitAction = null;
+        };
+
+        noteCancelButton.addEventListener('click', closeNoteModal);
+        noteSaveButton.addEventListener('click', () => {
+            if (noteSubmitAction) noteSubmitAction();
+        });
+        noteModal.addEventListener('click', (event) => {
+            if (event.target === noteModal) closeNoteModal();
         });
 
+        // 시간 설정 모달을 닫습니다.
         const closeSettingModal = () => {
             settingModal.classList.remove('is-open');
         };
@@ -476,10 +521,12 @@ if (!session) {
         /* =========================
            처음 실행
         ========================= */
+        // 오늘 기록을 확인하고 타이머 화면을 초기화합니다.
         const initializeTimer = async () => {
             const todayRecord = await getTodayStudyRecord(session.user.id);
 
             if (todayRecord) {
+                currentNote = todayRecord.note || '';
                 finishMatch();
                 return;
             }

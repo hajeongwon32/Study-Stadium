@@ -95,6 +95,10 @@
         .finish-modal-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 14px; place-items: center; border-radius: 50%; color: #fff; background: #e2a54d; font-size: 27px; font-weight: 900; }
         .finish-modal-content h2 { margin-bottom: 10px; font-size: 25px; }
         .finish-modal-message { margin: 0; color: #73869b; font-size: 14px; line-height: 1.7; }
+        .note-modal-content h2 { margin-bottom: 10px; }
+        .note-modal-message { margin: 0 0 14px; color: #73869b; font-size: 14px; line-height: 1.6; }
+        #studyNoteInput { width: 100%; min-height: 132px; resize: vertical; padding: 12px; border: 1px solid #dce5ef; border-radius: 9px; color: var(--ink); font: inherit; font-size: 14px; line-height: 1.6; }
+        #studyNoteInput:focus { border-color: var(--cyan); outline: 3px solid rgba(86, 191, 220, .2); }
         .modal-content label { display: block; margin-bottom: 8px; color: #60758a; font-size: 14px; font-weight: 700; }
         .setting-input { display: flex; align-items: center; gap: 8px; }
         .setting-input input { width: 100%; padding: 11px 12px; border: 1px solid #dce5ef; border-radius: 9px; color: var(--ink); font-size: 16px; }
