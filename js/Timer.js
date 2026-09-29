@@ -1,5 +1,5 @@
 import { supabase } from './lib/supabaseClient.js';
-import { addStudySetRecord, getTodayStudyRecord, saveStudyNote } from './services/recordService.js';
+import { addStudySetRecord, getTodayStudyRecord, markTodayStudyFinished, saveStudyNote } from './services/recordService.js';
 
 const { data: { session } } = await supabase.auth.getSession();
 
@@ -389,7 +389,14 @@ if (!session) {
         // 입력한 노트를 오늘 공부 기록에 저장하거나 수정합니다.
         const saveNote = async () => {
             try {
-                currentNote = studyNoteInput.value.trim();
+                const note = studyNoteInput.value.trim();
+                if (!note) {
+                    alert('오늘의 공부 노트를 입력해주세요.');
+                    studyNoteInput.focus();
+                    return false;
+                }
+
+                currentNote = note;
                 await saveStudyNote({ userId: session.user.id, note: currentNote });
                 closeNoteModal();
                 return true;
@@ -403,6 +410,12 @@ if (!session) {
         // 현재 세트 기록과 노트를 저장한 뒤 오늘 경기를 종료합니다.
         const finishTodayWithNote = async () => {
             if (isMatchFinished || mode !== 'study' || finishTodayButton.disabled) return;
+
+            if (!studyNoteInput.value.trim()) {
+                alert('오늘의 공부 노트를 입력해주세요.');
+                studyNoteInput.focus();
+                return;
+            }
 
             pauseTimer();
 
@@ -426,6 +439,17 @@ if (!session) {
                 toggleTimerButton.textContent = '▶  계속하기';
                 return;
             }
+
+            try {
+                await markTodayStudyFinished(session.user.id);
+            } catch (error) {
+                console.error('오늘 공부 종료 처리 실패:', error);
+                alert(`오늘 공부 종료 처리에 실패했습니다.\n${error.message}`);
+                finishTodayButton.disabled = false;
+                toggleTimerButton.disabled = false;
+                return;
+            }
+
             finishMatch();
         };
 
@@ -525,10 +549,15 @@ if (!session) {
         const initializeTimer = async () => {
             const todayRecord = await getTodayStudyRecord(session.user.id);
 
-            if (todayRecord) {
+            if (todayRecord && (todayRecord.is_finished || todayRecord.sets >= 4)) {
                 currentNote = todayRecord.note || '';
                 finishMatch();
                 return;
+            }
+
+            if (todayRecord) {
+                currentSet = Math.min(todayRecord.sets + 1, 4);
+                currentNote = todayRecord.note || '';
             }
 
             updateScreen();

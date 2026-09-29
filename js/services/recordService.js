@@ -14,7 +14,7 @@ export const getTodayStudyRecord = async (userId) => {
 
 	const { data, error } = await supabase
 		.from('study_records')
-		.select('id, sets, total_time, note')
+		.select('id, sets, total_time, note, is_finished')
 		.eq('user_id', userId)
 		.eq('date', getDateKey())
 		.maybeSingle();
@@ -26,10 +26,36 @@ export const getTodayStudyRecord = async (userId) => {
 	return data;
 };
 
+// 오늘 공부 기록을 종료 상태로 표시합니다.
+export const markTodayStudyFinished = async (userId) => {
+	if (!userId) {
+		throw new Error('로그인 사용자 정보가 없습니다. 다시 로그인해 주세요.');
+	}
+
+	const { data, error } = await supabase
+		.from('study_records')
+		.update({ is_finished: true })
+		.eq('user_id', userId)
+		.eq('date', getDateKey())
+		.select()
+		.single();
+
+	if (error) {
+		throw new Error(`오늘 공부 종료 처리 실패: ${error.message}`);
+	}
+
+	return data;
+};
+
 // 오늘 공부 기록의 노트를 새로 저장하거나 수정합니다.
 export const saveStudyNote = async ({ userId, note }) => {
 	if (!userId) {
 		throw new Error('로그인 사용자 정보가 없습니다. 다시 로그인해 주세요.');
+	}
+
+	const cleanNote = note.trim();
+	if (!cleanNote) {
+		throw new Error('공부 노트를 입력해 주세요.');
 	}
 
 	const { data: existingRecord, error: selectError } = await supabase
@@ -49,7 +75,7 @@ export const saveStudyNote = async ({ userId, note }) => {
 
 	const { data, error } = await supabase
 		.from('study_records')
-		.update({ note: note.trim() })
+		.update({ note: cleanNote })
 		.eq('id', existingRecord.id)
 		.eq('user_id', userId)
 		.select()
@@ -74,7 +100,7 @@ export const addStudySetRecord = async ({ userId, focusMinutes }) => {
 	const date = getDateKey();
 	const { data: existingRecord, error: selectError } = await supabase
 		.from('study_records')
-		.select('id, sets, total_time')
+		.select('id, sets, total_time, is_finished')
 		.eq('user_id', userId)
 		.eq('date', date)
 		.maybeSingle();
