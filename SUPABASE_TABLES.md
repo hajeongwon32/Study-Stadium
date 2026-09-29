@@ -21,7 +21,8 @@
 | **date** | TEXT | UNIQUE, NOT NULL | 공부 날짜 (예: '2026-09-21') |
 | **sets** | INTEGER | DEFAULT 0 | 완료한 뽀모도로 세트 수 (0 = 흙, 1~4 = 잔디 레벨) |
 | **total_time** | INTEGER | DEFAULT 0 | 총 공부 시간 (분 단위) |
-| **note** | TEXT | NULLABLE | MATCH REPORT 공부 일지 메모 |
+| **note** | TEXT | NOT NULL | MATCH REPORT 공부 일지 메모 |
+| **is_finished** | BOOLEAN | NOT NULL, DEFAULT FALSE | 오늘 공부를 사용자가 종료했는지 여부 |
 
 ---
 
