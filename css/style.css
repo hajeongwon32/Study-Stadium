@@ -195,6 +195,7 @@ body {
 }
 
 .calendar-cell {
+  position: relative;
   border-radius: var(--radius-sm);
   outline: 2px solid var(--card);
   outline-offset: -2px;
@@ -210,8 +211,34 @@ body {
 .calendar-cell.leaf { background: var(--leaf); }
 .calendar-cell.stadium { background: var(--stadium); }
 
+/* 이번 달이 아닌 칸: 코너플래그(깃대+깃발)를 CSS로 그려서 표시 */
 .calendar-cell.empty {
   background: var(--stadium);
+}
+
+.calendar-cell.empty::before {
+  /* 깃대 */
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  width: 2px;
+  height: 16px;
+  background: var(--line);
+  border-radius: 1px;
+}
+
+.calendar-cell.empty::after {
+  /* 깃발(삼각형) - 배경(짙은 초록)이랑 대비되는 색으로 크게 */
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 9px;
+  border-color: transparent transparent transparent var(--flag);
 }
 
 .calendar-cell.today {

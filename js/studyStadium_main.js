@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ---------- 데이터 불러오기 ----------
   let studyData = loadData();
-  let settings = loadSettings();        // 집중/휴식 분 단위 설정
+  let settings = loadSettings();
   let viewYear = new Date().getFullYear();
   let viewMonth = new Date().getMonth();
 
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     calendarGrid.innerHTML = '';
 
     const firstDay = new Date(viewYear, viewMonth, 1);
-    const startWeekday = firstDay.getDay(); // 이번 달 1일이 무슨 요일
+    const startWeekday = firstDay.getDay();
     const totalCells = 35;
 
     const todayKey = formatDateKey(new Date());
@@ -51,20 +51,20 @@ document.addEventListener('DOMContentLoaded', function () {
       const cell = document.createElement('div');
       cell.className = 'calendar-cell';
 
-      // 이번 달 1일 기준으로 며칠째인지 계산 (음수/초과 = 이번 달 x)
       const dayOffset = i - startWeekday;
       const cellDate = new Date(viewYear, viewMonth, 1 + dayOffset);
       const isThisMonth = cellDate.getMonth() === viewMonth;
 
       if (!isThisMonth) {
+        // 이번 달이 아닌 칸(지난달/다음달)은 코너플래그로 표시합니다.
+        // 이모지 대신 CSS(::before/::after)로 깃발을 그려서 크기/색을 조절해요.
         cell.classList.add('empty');
-        cell.textContent = '🚩';
       } else {
         const dateKey = formatDateKey(cellDate);
         const record = studyData[dateKey];
         const sets = record ? record.sets : 0;
         cell.classList.add(getStageKey(sets));
-        cell.dataset.date = dateKey; 
+        cell.dataset.date = dateKey;
 
         if (dateKey === todayKey) {
           cell.classList.add('today');
@@ -98,9 +98,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ---------- 오늘의 경기 UI 갱신 (가로 게이지 + 세트 칸) ----------
-  // 실제 세트 수는 studyData(localStorage)에서 바로 읽어옵니다.
-  // 세트를 채우는 타이머 자체는 정원이의 타이머 화면에서 돌아가고,
-  // 거기서 세트가 끝날 때마다 studyData에 저장해주는 방식이에요.
   function updateMatchProgressUI() {
     const todaySets = getTodayRecord(studyData).sets;
     matchProgressLabel.textContent = todaySets + ' / ' + MAX_SETS + ' SETS';
@@ -115,11 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ---------- 안내 문구(NEXT) 갱신 ----------
-  // 정원이의 타이머 화면이 저장해둔 상태(studyStadiumTimerStatus)를 읽어와서
-  // 지금 집중 중인지 / 쉬는 중인지 / 아직 시작 전인지 보여줍니다.
   function updateNextInfoUI() {
     const todaySets = getTodayRecord(studyData).sets;
-    const timerStatus = loadTimerStatus(); // { phase: 'focus' | 'break' | null }
+    const timerStatus = loadTimerStatus();
 
     if (todaySets >= MAX_SETS) {
       matchNextTitle.textContent = '오늘 경기 종료 (FULL TIME)';
@@ -145,17 +140,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ---------- 경기하러 가기 버튼 ----------
-  // 이제 이 화면에서 직접 타이머를 돌리지 않고,
-  // 정원이가 만들고 있는 타이머 진행 화면으로 이동만 시켜줍니다.
   // TODO: 정원이가 타이머 화면 파일을 올리면, 아래 파일 이름을 실제 파일명으로 바꿔주세요!
   kickoffBtn.addEventListener('click', function () {
     if (kickoffBtn.disabled) return;
-    window.location.href = '../html/Timer.html';
+    window.location.href = 'timer.html';
   });
 
   // ---------- 실시간 상태 갱신 ----------
-  // 타이머 화면(정원이 화면)에서 값이 바뀌는 걸 1초마다 다시 읽어와서
-  // 세트 수 / 안내 문구를 최신 상태로 보여줍니다.
   setInterval(function () {
     studyData = loadData();
     renderCalendar();
@@ -199,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let focusMinutes = Number(focusMinutesInput.value);
     let breakMinutes = Number(breakMinutesInput.value);
 
-    // 이상한 값(0 이하, 숫자 아님)이 들어오면 기본값
     if (!focusMinutes || focusMinutes < 1) focusMinutes = DEFAULT_FOCUS_MINUTES;
     if (!breakMinutes || breakMinutes < 1) breakMinutes = DEFAULT_BREAK_MINUTES;
 

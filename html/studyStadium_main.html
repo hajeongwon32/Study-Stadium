@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Study Stadium</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
@@ -81,7 +81,7 @@
       <section class="card">
         <h2 class="card-label">Study Note</h2>
         <div class="note-row">
-          <textarea class="note-input" id="studyNote" placeholder="오늘 학습 내용을 입력해 주세요"></textarea>
+          <textarea class="note-input" id="studyNote" placeholder="오늘 학습한 내용을 입력해 주세요"></textarea>
           <button class="btn-save" id="saveNoteBtn">저장</button>
         </div>
       </section>
@@ -121,9 +121,15 @@
     <div class="modal-overlay" id="helpOverlay" hidden>
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
         <div class="modal-head">
-          <h2 class="modal-title" id="helpTitle">축구 용어 설명</h2>
+          <h2 class="modal-title" id="helpTitle">이 앱은? / 용어 설명</h2>
           <button class="modal-close-x" id="helpCloseX" aria-label="닫기">✕</button>
         </div>
+
+        <p class="card-sub">
+          Study Stadium은 공부를 축구 경기처럼 진행하는 뽀모도로 타이머 앱이에요.
+          한 번 집중할 때마다 1세트(기본 50분)이고, 하루 4세트를 채우면 오늘의 경기가 끝나요(FULL TIME).
+          세트를 채울수록 흙 → 싹 → 잎 → 구장 순서로 나만의 구장이 자라나요.
+        </p>
 
         <dl class="glossary-list">
           <div class="glossary-item">
@@ -211,7 +217,7 @@
     </div>
   </div>
 
-  <script src="../js/studyStadium_data.js"></script>
-  <script src="../js/studyStadium_main.js"></script>
+  <script src="studyStadium_data.js"></script>
+  <script src="studyStadium_main.js"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const growthLeafCount = document.getElementById('growthLeafCount');
   const growthStadiumCount = document.getElementById('growthStadiumCount');
 
-  const overviewStatus = document.getElementById('overviewStatus');
+  const ddayStatus = document.getElementById('ddayStatus');
 
   const helpBtn = document.getElementById('helpBtn');
   const helpOverlay = document.getElementById('helpOverlay');
@@ -54,9 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
   growthLeafCount.textContent = counts.leaf;
   growthStadiumCount.textContent = counts.stadium;
 
-  overviewStatus.textContent = stats.matchDays > 0
-    ? '지금까지 ' + stats.matchDays + '일 동안 기록을 남겼어요.'
-    : '아직 기록된 공부 데이터가 없습니다.';
+  // 디데이: 시작일로부터 며칠째인지 + 그 중 며칠을 공부했는지
+  const daysSinceStart = getDaysSinceStart();
+  ddayStatus.textContent =
+    '스타디움을 시작한 지 ' + daysSinceStart + '일째, 그 중 ' + stats.matchDays + '일 공부했어요.';
 
   // ---- 도움말 팝업 ----
   function openHelp() { helpOverlay.hidden = false; }

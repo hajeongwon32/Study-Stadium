@@ -90,9 +90,6 @@ function getTodayRecord(data) {
 }
 
 // 세트 하나 완료 기록 추가하기
-// 타이머 화면(정원이 화면)에서 집중 세트가 끝날 때마다 이 함수를 불러서 저장하면 됩니다.
-// focusMinutesUsed: 이번 세트에 실제로 사용한 집중 시간(분) = 그 순간의 설정값
-// (나중에 설정을 바꿔도, 이미 끝난 세트의 시간은 이 값 그대로 남아있게 하기 위해서예요)
 function addCompletedSet(data, focusMinutesUsed) {
   const todayKey = formatDateKey(new Date());
   const record = data[todayKey] || { sets: 0, note: '', minutes: 0 };
@@ -102,25 +99,51 @@ function addCompletedSet(data, focusMinutesUsed) {
   return data;
 }
 
+// ------------------- 시작일 기록 (디데이 계산용) -------------------
+const START_DATE_KEY = 'studyStadiumStartDate';
+
+// 이 앱을 시작한 날짜를 구합니다.
+// 한 번도 저장된 적 없으면: 이미 기록된 공부 데이터가 있는지 보고,
+// 있으면 그 중 가장 빠른 날짜를, 없으면 오늘 날짜를 시작일로 저장합니다.
+function getStartDate() {
+  const saved = localStorage.getItem(START_DATE_KEY);
+  if (saved) return saved;
+
+  const data = loadData();
+  let earliest = null;
+  for (const dateKey in data) {
+    if (!earliest || dateKey < earliest) earliest = dateKey;
+  }
+
+  const startDate = earliest || formatDateKey(new Date());
+  localStorage.setItem(START_DATE_KEY, startDate);
+  return startDate;
+}
+
+// 시작일로부터 오늘까지 며칠째인지 (시작한 날 = 1일째로 셉니다)
+function getDaysSinceStart() {
+  const startDate = new Date(getStartDate() + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((today - startDate) / (1000 * 60 * 60 * 24));
+  return diffDays + 1;
+}
+
 // ------------------- 통계 계산 -------------------
 function computeStats(data, settings) {
   const today = new Date();
 
   let totalSets = 0;
   let totalMinutes = 0;
-  let matchDays = 0;       // 하루라도 공부한 날 수
-  let monthSets = 0;       // 이번 달 세트 합
+  let matchDays = 0;
+  let monthSets = 0;
   const stageCounts = { soil: 0, sprout: 0, leaf: 0, stadium: 0 };
 
   for (const dateKey in data) {
     const record = data[dateKey];
     const sets = record.sets || 0;
-    if (sets <= 0) continue; // 0세트인 날은 통계에서 스킵
+    if (sets <= 0) continue;
 
-    // 그 날 실제로 집중한 시간(분). record.minutes가 저장돼 있으면 그 값을 쓰고,
-    // 옛날 기록처럼 minutes가 없으면 기본 집중 시간(50분)으로 계산합니다.
-    // ★ 지금 설정된 집중 시간을 쓰지 않는 이유: 나중에 설정을 바꿔도
-    //   이미 완료된 기록의 통계가 같이 바뀌어버리면 안 되기 때문이에요.
     const minutesStudied = typeof record.minutes === 'number'
       ? record.minutes
       : sets * DEFAULT_FOCUS_MINUTES;
@@ -137,7 +160,7 @@ function computeStats(data, settings) {
     }
   }
 
-  let streak = 0; //연속기록 (오늘 아직 공부 안 했으면 어제부터 세기 시작)
+  let streak = 0;
   const cursor = new Date(today);
   cursor.setHours(0, 0, 0, 0);
   if (getTodayRecord(data).sets === 0) {
