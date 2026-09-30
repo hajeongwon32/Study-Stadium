@@ -20,8 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await signIn({ nickname, password });
 
       if (result.success) {
-        // 메인 화면 완성 전까지 타이머 화면으로 바로 진입
-        window.location.href = "Timer.html";
+        // 로그인 성공 시 메인 화면으로 이동
+        window.location.href = "studyStadium_main.html";
       } else {
         alert(`로그인에 실패했습니다: ${result.error}`);
       }

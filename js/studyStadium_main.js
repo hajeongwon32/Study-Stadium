@@ -1,3 +1,6 @@
+import { supabase } from './lib/supabaseClient.js';
+import { getTodayStudyRecord } from './services/recordService.js';
+
 document.addEventListener('DOMContentLoaded', function () {
 
   const calendarGrid = document.getElementById('calendarGrid');
@@ -8,11 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const matchNextTitle = document.getElementById('matchNextTitle');
   const matchNextDesc = document.getElementById('matchNextDesc');
   const matchProgressLabel = document.getElementById('matchProgressLabel');
-  const setSegments = document.querySelectorAll('.set-segment');
   const kickoffBtn = document.getElementById('kickoffBtn');
-
-  const studyNote = document.getElementById('studyNote');
-  const saveNoteBtn = document.getElementById('saveNoteBtn');
 
   const statTotalSets = document.getElementById('statTotalSets');
   const statFocusTime = document.getElementById('statFocusTime');
@@ -37,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
   let viewYear = new Date().getFullYear();
   let viewMonth = new Date().getMonth();
 
+  // 오늘 경기를 서버(Supabase)에서 "이미 끝냄"으로 표시했는지 여부.
+  // 정원이의 타이머 화면에서 "오늘의 경기 끝내기"를 누르면 여기가 true가 돼요.
+  // 로그인 안 된 상태로 메인화면만 볼 때는 항상 false로 두고 기존 방식대로 동작해요.
+  let todayFinishedOnServer = false;
+
   // ---------- 달력 그리기 ----------
   function renderCalendar() {
     calendarGrid.innerHTML = '';
@@ -57,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (!isThisMonth) {
         // 이번 달이 아닌 칸(지난달/다음달)은 코너플래그로 표시합니다.
-        // 이모지 대신 CSS(::before/::after)로 깃발을 그려서 크기/색을 조절해요.
         cell.classList.add('empty');
       } else {
         const dateKey = formatDateKey(cellDate);
@@ -97,28 +100,20 @@ document.addEventListener('DOMContentLoaded', function () {
     statStreak.textContent = stats.streak;
   }
 
-  // ---------- 오늘의 경기 UI 갱신 (가로 게이지 + 세트 칸) ----------
+  // ---------- 오늘의 경기 진행 상황 텍스트 갱신 ----------
   function updateMatchProgressUI() {
     const todaySets = getTodayRecord(studyData).sets;
     matchProgressLabel.textContent = todaySets + ' / ' + MAX_SETS + ' SETS';
-
-    setSegments.forEach(function (segment, index) {
-      if (index < todaySets) {
-        segment.classList.add('filled');
-      } else {
-        segment.classList.remove('filled');
-      }
-    });
   }
 
-  // ---------- 안내 문구(NEXT) 갱신 ----------
+  // ---------- 안내 문구(NEXT) + 경기하러 가기 버튼 상태 갱신 ----------
   function updateNextInfoUI() {
     const todaySets = getTodayRecord(studyData).sets;
     const timerStatus = loadTimerStatus();
 
-    if (todaySets >= MAX_SETS) {
+    if (todayFinishedOnServer || todaySets >= MAX_SETS) {
       matchNextTitle.textContent = '오늘 경기 종료 (FULL TIME)';
-      matchNextDesc.textContent = '4세트 모두 완료했어요. 내일 또 만나요!';
+      matchNextDesc.textContent = '오늘의 공부를 마쳤어요. 내일 또 만나요!';
       kickoffBtn.disabled = true;
       kickoffBtn.textContent = '오늘 완료';
     } else if (timerStatus.phase === 'focus') {
@@ -139,14 +134,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // ---------- 오늘 경기가 서버에서 이미 끝났는지 확인 ----------
+  // 정원이 코드(getTodayStudyRecord)를 그대로 가져다 씁니다. 이 함수는 고치지 않아요.
+  function checkTodayFinishedOnServer() {
+    supabase.auth.getSession().then(function (result) {
+      const session = result.data.session;
+
+      if (!session) {
+        // 로그인 안 되어 있으면 그냥 기존 방식(로컬 세트 수 기준)대로 동작합니다.
+        todayFinishedOnServer = false;
+        updateNextInfoUI();
+        return;
+      }
+
+      getTodayStudyRecord(session.user.id).then(function (record) {
+        todayFinishedOnServer = Boolean(record && record.is_finished);
+        updateNextInfoUI();
+      }).catch(function (error) {
+        console.error('오늘 완료 여부 확인 실패:', error);
+      });
+    }).catch(function (error) {
+      console.error('로그인 상태 확인 실패:', error);
+    });
+  }
+
   // ---------- 경기하러 가기 버튼 ----------
-  // TODO: 정원이가 타이머 화면 파일을 올리면, 아래 파일 이름을 실제 파일명으로 바꿔주세요!
   kickoffBtn.addEventListener('click', function () {
     if (kickoffBtn.disabled) return;
     window.location.href = 'timer.html';
   });
 
-  // ---------- 실시간 상태 갱신 ----------
+  // ---------- 실시간 상태 갱신 (로컬 데이터, 1초마다) ----------
   setInterval(function () {
     studyData = loadData();
     renderCalendar();
@@ -155,17 +173,8 @@ document.addEventListener('DOMContentLoaded', function () {
     updateNextInfoUI();
   }, 1000);
 
-  // ---------- 공부 일지 ----------
-  const todayKeyForNote = formatDateKey(new Date());
-  if (studyData[todayKeyForNote]) {
-    studyNote.value = studyData[todayKeyForNote].note || '';
-  }
-  saveNoteBtn.addEventListener('click', function () {
-    const todayKey = formatDateKey(new Date());
-    studyData[todayKey] = studyData[todayKey] || { sets: 0, note: '' };
-    studyData[todayKey].note = studyNote.value;
-    saveData(studyData);
-  });
+  // ---------- 오늘 경기 완료 여부 갱신 (서버에 물어보는 거라 5초마다) ----------
+  setInterval(checkTodayFinishedOnServer, 5000);
 
   // ---------- 도움말 팝업 ----------
   function openHelp() { helpOverlay.hidden = false; }
@@ -216,4 +225,5 @@ document.addEventListener('DOMContentLoaded', function () {
   renderStatsPreview();
   updateMatchProgressUI();
   updateNextInfoUI();
+  checkTodayFinishedOnServer();
 });

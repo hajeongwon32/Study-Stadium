@@ -48,7 +48,7 @@
         </div>
       </section>
 
-      <!-- 오늘의 경기 -->
+      <!-- 오늘의 경기 + 통계 요약 (하나로 합침) -->
       <section class="card raised">
         <h2 class="card-label">Today's Match</h2>
 
@@ -65,30 +65,11 @@
           <span id="matchProgressLabel">0 / 4 SETS</span>
         </div>
 
-        <div class="set-segments" id="setSegments">
-          <span class="set-segment"></span>
-          <span class="set-segment"></span>
-          <span class="set-segment"></span>
-          <span class="set-segment"></span>
-        </div>
-
         <div class="match-cta-row">
           <button class="btn-kickoff" id="kickoffBtn">경기하러 가기</button>
         </div>
-      </section>
 
-      <!-- 공부 일지 -->
-      <section class="card">
-        <h2 class="card-label">Study Note</h2>
-        <div class="note-row">
-          <textarea class="note-input" id="studyNote" placeholder="오늘 학습한 내용을 입력해 주세요"></textarea>
-          <button class="btn-save" id="saveNoteBtn">저장</button>
-        </div>
-      </section>
-
-      <!-- 공부 통계 요약 -->
-      <section class="card">
-        <h2 class="card-label">Study Stats</h2>
+        <h2 class="card-label section-divider">Study Stats</h2>
         <div class="stats-preview-grid">
           <div class="stats-preview-item">
             <div class="stats-preview-value" id="statTotalSets">0</div>
@@ -218,6 +199,6 @@
   </div>
 
   <script src="../js/studyStadium_data.js"></script>
-  <script src="../js/studyStadium_main.js"></script>
+  <script type="module" src="../js/studyStadium_main.js"></script>
 </body>
 </html>
