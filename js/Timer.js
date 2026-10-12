@@ -164,7 +164,7 @@ if (!session) {
                     stepBreak.classList.add('complete');
                     step3.classList.add('complete');
                     step4.classList.add('current');
-                    linePercent = 75;
+                    linePercent = 100;
                 }
             } else if (mode === 'break') {
                 stepBreak.classList.add('current');
@@ -348,8 +348,6 @@ if (!session) {
                     }
                     return;
                 }
-                remainingSeconds--;
-                renderTimer();
             }, 1000);
             toggleTimerButton.disabled = false;
             toggleTimerButton.textContent = 'Ⅱ  일시정지';
@@ -373,7 +371,10 @@ if (!session) {
         };
 
         toggleTimerButton.addEventListener('click', () => {
-            if (isMatchFinished) return;
+            if (isMatchFinished) {
+                openNoteModal(saveNote);
+                return;
+            }
             if (timerId) {
                 pauseTimer();
             } else {
@@ -456,9 +457,6 @@ if (!session) {
         finishTodayButton.addEventListener('click', () => {
             pauseTimer();
             openNoteModal(finishTodayWithNote);
-        });
-        toggleTimerButton.addEventListener('click', () => {
-            if (isMatchFinished) openNoteModal(saveNote);
         });
 
         let noteSubmitAction = null;

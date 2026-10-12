@@ -28,8 +28,8 @@
 | HA | 세트 기록 저장·초기화 | `saveCurrentSetRecord()`, `initializeTimer()` | 완료 |
 | HA | 세트·브레이크 종료 알람 | `playAlarm5Sec()` | 완료 |
 | LEE | 달력 표시 | `renderCalendar()` | 완료 |
-| LEE | 오늘 경기 진행률 | `updateMatchProgressUI()` | 완료 (게이지 4칸 제거, 텍스트로만 표시) |
-| LEE | 타이머 화면 이동 및 시작 버튼 상태 제어 | `kickoffBtn` 클릭 이벤트 | 완료 (오늘 경기 완료 시 비활성화 포함) |
+| LEE | 오늘 경기 진행률 | `updateMatchProgressUI()` | 완료 |
+| LEE | 타이머 이동·시작 버튼 제어 | `kickoffBtn` 클릭 | 완료 |
 | LEE | 통계 계산·표시 | `computeStats()`, `renderStats()` | 완료 |
 | LEE | 성장 단계 계산 | `getStageKey()` | 완료 |
 
@@ -49,6 +49,8 @@
 - 메인 화면 Today's Match + Study Stats 섹션 통합 (기존 Study Note 섹션은 삭제)
 - 캘린더 코너플래그 디자인 개선 (CSS로 더 크고 눈에 띄게 변경)
 - "?" 도움말에 앱 소개 문구 추가
+- 오늘 경기 진행률: 게이지 4칸 제거, 텍스트로만 표시
+- 경기하러 가기 버튼: 오늘 경기 완료 시 비활성화
 
 ### 진행 중
 
