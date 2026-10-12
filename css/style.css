@@ -632,3 +632,11 @@ body {
     padding-bottom: 36px;
   }
 }
+/* ---- 달력 날짜 클릭 가능 표시 (팝업 자체는 정원이 담당) ---- */
+.calendar-cell.clickable {
+  cursor: pointer;
+}
+.calendar-cell.clickable:hover {
+  outline: 2px solid var(--flag);
+  outline-offset: -2px;
+}

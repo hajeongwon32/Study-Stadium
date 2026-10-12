@@ -72,6 +72,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (dateKey === todayKey) {
           cell.classList.add('today');
         }
+
+        // 클릭해서 그날 정보를 볼 수 있는 칸인지 정하기 (정원이의 Match Report 팝업이 이 신호를 받아요)
+        // - 오늘보다 미래인 날: 클릭 불가
+        // - 오늘인데 아직 오늘 경기를 안 끝냈으면: 클릭 불가
+        // - 그 외(오늘을 끝낸 오늘 칸, 또는 오늘 이전 칸): 클릭 가능
+        const isFutureDay = dateKey > todayKey;
+        const isTodayCell = dateKey === todayKey;
+        const canOpenDay = !isFutureDay && (!isTodayCell || todayFinishedOnServer);
+        if (canOpenDay) {
+          cell.classList.add('clickable');
+        }
       }
 
       calendarGrid.appendChild(cell);
@@ -157,6 +168,22 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('로그인 상태 확인 실패:', error);
     });
   }
+
+  // ---------- 날짜 클릭 (역할 분담: 메인/클릭 = 나, 팝업 = 정원) ----------
+  // 클릭 가능한 날짜 칸을 누르면 'dayClicked' 이벤트를 쏴줍니다.
+  // 정원이는 자기 Match Report 팝업 코드에서 이 이벤트를 받아서(detail.dateKey) 팝업을 띄우면 됩니다.
+  // 예시:
+  //   document.addEventListener('dayClicked', function (e) {
+  //     const dateKey = e.detail.dateKey; // 예: '2026-10-10'
+  //     // 여기서 Match Report 팝업 열기
+  //   });
+  calendarGrid.addEventListener('click', function (e) {
+    const cell = e.target.closest('.calendar-cell');
+    if (!cell || !cell.classList.contains('clickable')) return;
+
+    const dateKey = cell.dataset.date;
+    document.dispatchEvent(new CustomEvent('dayClicked', { detail: { dateKey: dateKey } }));
+  });
 
   // ---------- 경기하러 가기 버튼 ----------
   kickoffBtn.addEventListener('click', function () {
