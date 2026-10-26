@@ -1,12 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap');
-
+/* 메인 화면(style.css)과 같은 팔레트를 사용합니다. */
 :root {
-    --forest: #123f2c;
-    --forest-light: #2b6548;
-    --ink: #4d554f;
-    --muted: #7f8580;
-    --lavender: #f1f2fc;
-    --page: #f8f8fc;
+    --stadium: #173D2B;
+    --stadium-dark: #0F2C1F;
+    --stripe: #1D4834;
+    --leaf: #3F8A58;
+    --flag: #B94B55;
+
+    --bg: #F7F6FB;
+    --card: #FFFFFF;
+    --line: #E2E6E3;
+    --field: #FAFAFC;
+
+    --text-strong: #173D2B;
+    --text-title: #243F31;
+    --text-muted: #66736C;
+    --text-faint: #98A09C;
+
+    --pitch-line: rgba(255, 255, 255, 0.16);
 }
 
 * {
@@ -14,12 +24,12 @@
 }
 
 body {
+    margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    margin: 0;
-    color: var(--ink);
-    font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
-    background: var(--page);
+    color: var(--text-title);
+    font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+    background: var(--bg);
 }
 
 button,
@@ -27,355 +37,265 @@ input {
     font: inherit;
 }
 
-button {
-    border: 0;
-    cursor: pointer;
-}
-
 .page-shell {
-    width: min(100%, 540px);
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 16px 0 38px;
-}
-
-.login-card {
-    overflow: hidden;
-    border: 1px solid #d8d8dd;
-    border-radius: 22px;
-    background: #fbf9fd;
-    box-shadow: 0 18px 28px rgba(31, 50, 41, 0.08);
-}
-
-.intro {
-    position: relative;
-    min-height: 222px;
-    padding: 116px 24px 24px;
-    text-align: center;
-}
-
-.circle-button {
-    position: absolute;
-    top: 20px;
-    left: 16px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    color: var(--forest);
-    background: #f0f2fc;
-    font-size: 32px;
-    font-weight: 300;
-    line-height: 1;
-}
-
-.ball-mark {
-    position: absolute;
-    top: 29px;
-    right: 17px;
-    color: #747b75;
-    font-size: 23px;
-    filter: grayscale(1);
-}
-
-.intro-copy h1 {
-    margin: 0;
-    color: var(--forest);
-    font-family: Jua, "Noto Sans KR", sans-serif;
-    font-size: clamp(25px, 7vw, 32px);
-    letter-spacing: 0;
-    line-height: 1.1;
-}
-
-.intro-copy p {
-    margin: 7px 0 0;
-    color: #5f615f;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.login-panel {
-    border-top: 7px solid var(--forest-light);
-    border-radius: 22px 22px 0 0;
-    background: #ffffff;
-}
-
-.tabs {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 42px;
-    padding-top: 20px;
+    min-height: 100vh;
+    padding: 32px 16px;
 }
 
-.tab {
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(23, 61, 43, 0.06), 0 12px 32px rgba(23, 61, 43, 0.08);
+}
+
+/* ---------- 상단: 위에서 내려다본 경기장 ---------- */
+.pitch {
     position: relative;
-    padding: 0 0 10px;
-    color: #8b8e8b;
-    background: transparent;
-    font-size: 24px;
-    font-weight: 800;
+    padding: 38px 34px 40px;
+    color: #FFFFFF;
+    /* 잔디 깎은 줄무늬 */
+    background: repeating-linear-gradient(90deg, var(--stadium) 0 44px, var(--stripe) 44px 88px);
 }
 
-.tab-link {
-    text-decoration: none;
-}
-
-.tab.active {
-    color: var(--forest);
-}
-
-.tab.active::after {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    border-radius: 5px;
-    background: var(--forest-light);
+/* 터치라인 + 하프라인 */
+.pitch::before {
     content: "";
+    position: absolute;
+    inset: 12px;
+    border: 2px solid var(--pitch-line);
+    border-radius: 3px;
+    background: linear-gradient(90deg,
+        transparent calc(72% - 1px),
+        var(--pitch-line) calc(72% - 1px) calc(72% + 1px),
+        transparent calc(72% + 1px));
+    pointer-events: none;
 }
 
-.login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 19px;
-    padding: 33px 32px 29px;
+/* 센터서클 */
+.pitch::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(12px + (100% - 24px) * 0.72);
+    width: 112px;
+    height: 112px;
+    border: 2px solid var(--pitch-line);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
-.field-group label {
-    display: block;
-    margin-bottom: 7px;
-    color: #4f5751;
-    font-size: 16px;
-    font-weight: 800;
-}
-
-.field-icon {
-    display: inline-block;
-    width: 23px;
-    color: var(--forest-light);
-    font-size: 20px;
-    vertical-align: -2px;
-}
-
-.input-wrap {
+.pitch > * {
     position: relative;
-    flex: 1;
+    z-index: 1;
 }
 
-.name-check-row {
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-}
-
-.check-name-button {
-    flex: 0 0 88px;
-    border-radius: 13px;
-    color: #ffffff;
-    background: var(--forest-light);
-    font-size: 13px;
-    font-weight: 800;
-}
-
-.check-name-button:hover,
-.check-name-button:focus-visible {
-    background: var(--forest);
-    outline: 3px solid rgba(43, 101, 72, 0.25);
-    outline-offset: 2px;
-}
-
-.name-status {
-    min-height: 19px;
-    margin: 5px 0 0 3px;
-    color: var(--muted);
-    font-size: 12px;
+.pitch-eyebrow {
+    margin: 0 0 14px;
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.14em;
+    opacity: 0.7;
 }
 
-.name-status.success {
-    color: var(--forest-light);
+.pitch h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
-.name-status.error {
-    color: #ae4e4e;
+.pitch-copy {
+    margin: 10px 0 0;
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+/* ---------- 폼 ---------- */
+.auth-form {
+    padding: 34px 34px 30px;
+}
+
+.field-group + .field-group {
+    margin-top: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 input[type="text"],
 input[type="password"] {
     width: 100%;
-    height: 59px;
-    padding: 0 51px 0 18px;
-    border: 0;
-    border-radius: 15px;
-    outline: 0;
-    color: #505750;
-    background: var(--lavender);
-    font-size: 16px;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--text-strong);
+    background: var(--field);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
 }
 
 input::placeholder {
-    color: #8b908c;
-    opacity: 1;
+    color: var(--text-faint);
 }
 
-input[type="text"]:focus,
-input[type="password"]:focus {
-    box-shadow: 0 0 0 3px rgba(43, 101, 72, 0.25);
+input:focus {
+    border-color: var(--stadium);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(23, 61, 43, 0.12);
 }
 
-.input-icon,
+.password-wrap {
+    position: relative;
+}
+
+.password-wrap input {
+    padding-right: 60px;
+}
+
 .password-toggle {
     position: absolute;
     top: 50%;
-    right: 17px;
-    color: #7a807a;
-    transform: translateY(-50%);
-    font-size: 21px;
-}
-
-.password-toggle {
-    padding: 5px;
+    right: 8px;
+    height: 32px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
+    color: var(--text-muted);
     background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transform: translateY(-50%);
 }
 
-.remember-option {
+.password-toggle:hover {
+    color: var(--text-strong);
+    background: rgba(23, 61, 43, 0.06);
+}
+
+.name-check-row {
     display: flex;
-    align-items: center;
     gap: 8px;
-    color: #59605a;
+}
+
+.name-check-row input {
+    flex: 1;
+    min-width: 0;
+}
+
+.check-name-button {
+    flex: none;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid var(--stadium);
+    border-radius: 12px;
+    color: var(--stadium);
+    background: #FFFFFF;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 700;
     cursor: pointer;
 }
 
-.remember-option input {
-    position: absolute;
-    opacity: 0;
+.check-name-button:hover {
+    background: rgba(23, 61, 43, 0.05);
 }
 
-.checkmark {
-    display: grid;
-    width: 22px;
-    height: 22px;
-    place-items: center;
-    border-radius: 4px;
-    color: #ffffff;
-    background: var(--forest);
-    font-size: 18px;
-    font-weight: 900;
-}
-
-.remember-option input:not(:checked) + .checkmark {
-    border: 2px solid #aeb5ae;
-    color: transparent;
-    background: #ffffff;
-}
-
-.actions {
-    display: grid;
-    grid-template-columns: 132px 1fr;
-    gap: 12px;
-    margin-top: 13px;
-}
-
-.actions button,
-.actions .action-link {
-    height: 62px;
-    border-radius: 15px;
-    font-size: 22px;
-    font-weight: 800;
-}
-
-.cancel-button {
-    color: #111b18;
-    background: #e2e7ff;
-}
-
-.action-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
-.submit-button {
-    color: #ffffff;
-    background: #103f29;
-    box-shadow: 0 5px 9px rgba(15, 58, 38, 0.22);
-}
-
-.signup-form {
-    gap: 16px;
-    padding-top: 29px;
-}
-
-.agreement-option {
-    margin-top: 3px;
-}
-
-.signup-form .actions {
-    margin-top: 10px;
-}
-
-.actions button:hover,
-.actions button:focus-visible,
-.circle-button:hover,
-.circle-button:focus-visible,
-.password-toggle:focus-visible,
-.tab:focus-visible {
-    outline: 3px solid rgba(43, 101, 72, 0.35);
-    outline-offset: 3px;
-}
-
-.page-footer {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-height: 85px;
-    padding: 20px 32px;
-    color: #7d847e;
+/* ---------- 안내 문구 ---------- */
+.name-status,
+.form-message {
+    min-height: 18px;
+    margin: 6px 0 0 2px;
+    color: var(--text-muted);
     font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-weight: 600;
 }
 
-@media (max-width: 480px) {
-    .page-shell {
-        padding: 0 0 20px;
+.form-message {
+    margin: 16px 0 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.name-status.success,
+.form-message.success {
+    color: var(--leaf);
+}
+
+.name-status.error,
+.form-message.error {
+    color: var(--flag);
+}
+
+/* ---------- 버튼 · 링크 ---------- */
+.submit-button {
+    width: 100%;
+    height: 56px;
+    border: 0;
+    border-radius: 12px;
+    color: #FFFFFF;
+    background: var(--stadium);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.submit-button:hover {
+    background: var(--stadium-dark);
+}
+
+.submit-button:disabled,
+.check-name-button:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.switch-link {
+    margin: 20px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+}
+
+.switch-link a {
+    margin-left: 4px;
+    color: var(--text-strong);
+    font-weight: 700;
+    text-underline-offset: 3px;
+}
+
+.submit-button:focus-visible,
+.check-name-button:focus-visible,
+.password-toggle:focus-visible,
+.switch-link a:focus-visible {
+    outline: 3px solid rgba(23, 61, 43, 0.3);
+    outline-offset: 2px;
+}
+
+@media (max-width: 400px) {
+    .pitch {
+        padding: 26px 22px 28px;
     }
 
-    .login-card {
-        border-right: 0;
-        border-left: 0;
-        border-radius: 0 0 22px 22px;
+    .pitch h1 {
+        font-size: 23px;
     }
 
-    .intro {
-        min-height: 222px;
-    }
-
-    .login-form {
-        padding-right: 20px;
-        padding-left: 20px;
-    }
-
-    .check-name-button {
-        flex-basis: 78px;
-        font-size: 12px;
-    }
-
-    .actions {
-        grid-template-columns: 1fr 2.35fr;
-        gap: 12px;
-    }
-
-    .actions button {
-        font-size: clamp(19px, 5.8vw, 27px);
-    }
-
-    .page-footer {
-        min-height: 92px;
-        padding: 22px;
-        font-size: 12px;
+    .auth-form {
+        padding: 24px 20px 20px;
     }
 }
