@@ -1,10 +1,10 @@
-import { supabase } from './lib/supabaseClient.js';
-import { addStudySetRecord, getTodayStudyRecord, markTodayStudyFinished, saveStudyNote } from './services/recordService.js';
+import { supabase } from './lib/supabase-client.js';
+import { addStudySetRecord, getTodayStudyRecord, markTodayStudyFinished, saveStudyNote } from './services/record-service.js';
 
 const { data: { session } } = await supabase.auth.getSession();
 
 if (!session) {
-    window.location.replace('Login.html');
+    window.location.replace('login.html');
     throw new Error('로그인이 필요합니다.');
 }
 
@@ -537,7 +537,7 @@ if (!session) {
                 return;
             }
 
-            window.location.replace('Login.html');
+            window.location.replace('login.html');
         });
 
         /* =========================

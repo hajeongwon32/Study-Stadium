@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabaseClient.js';
+import { supabase } from '../lib/supabase-client.js';
 
 // 날짜를 Supabase 조회용 YYYY-MM-DD 문자열로 변환합니다.
 const getDateKey = (date = new Date()) => {

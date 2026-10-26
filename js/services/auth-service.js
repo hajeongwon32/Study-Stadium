@@ -1,4 +1,4 @@
-import { supabase } from "../lib/supabaseClient.js";
+import { supabase } from "../lib/supabase-client.js";
 
 // 닉네임을 Supabase Auth에서 사용할 이메일 형식으로 변환합니다.
 const nicknameToEmail = (nickname) => {

@@ -1,4 +1,4 @@
-import { checkNicknameDuplicate, signUp } from "./services/authService.js";
+import { checkNicknameDuplicate, signUp } from "./services/auth-service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const nicknameInput = document.getElementById("signup-name");
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (result.success) {
         alert("선수 등록이 완료되었습니다! 로그인 페이지로 이동합니다.");
-        window.location.href = "Login.html";
+        window.location.href = "login.html";
       } else {
         alert(`회원가입에 실패했습니다: ${result.error}`);
       }

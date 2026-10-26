@@ -1,5 +1,5 @@
-import { supabase } from './lib/supabaseClient.js';
-import { getTodayStudyRecord } from './services/recordService.js';
+import { supabase } from './lib/supabase-client.js';
+import { getTodayStudyRecord } from './services/record-service.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
