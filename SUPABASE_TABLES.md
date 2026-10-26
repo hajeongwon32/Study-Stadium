@@ -30,7 +30,7 @@
 - **UNIQUE (user_id, date)**: 사용자당 하루 1행. upsert 시 `onConflict: 'user_id,date'`.
 - RLS: 본인 행만 전체 접근 가능 (`auth.uid() = user_id`).
 - `date`는 반드시 로컬 기준 `YYYY-MM-DD` 문자열로 보냅니다. `toISOString()`은 UTC라 한국 시간 오전 9시 전에 하루가 밀리므로 사용 금지.
-  오늘 날짜: `new Date().toLocaleDateString('sv-SE')` (또는 `recordService.js`의 `getDateKey()`).
+  오늘 날짜: `new Date().toLocaleDateString('sv-SE')` (또는 `record-service.js`의 `getDateKey()`).
 
 ---
 

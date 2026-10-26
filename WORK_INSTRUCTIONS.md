@@ -4,9 +4,9 @@
 
 | 담당 | 화면·기능 | 주요 파일 |
 |---|---|---|
-| HA | 로그인·회원가입 | `js/Login.js`, `js/SignUp.js`, `js/services/authService.js` |
-| HA | 타이머·세트 진행 | `js/Timer.js`, `html/Timer.html`, `css/Timer.css` |
-| HA | 경기 리포트·노트 팝업 | `html/Timer.html`, `css/Timer.css`, `js/Timer.js` |
+| HA | 로그인·회원가입 | `js/login.js`, `js/sign-up.js`, `js/services/auth-service.js` |
+| HA | 타이머·세트 진행 | `js/timer.js`, `html/timer.html`, `css/timer.css` |
+| HA | 경기 리포트·노트 팝업 | `html/timer.html`, `css/timer.css`, `js/timer.js` |
 | LEE | 메인 화면 | `js/studyStadium_main.js`, `html/studyStadium_main.html` |
 | LEE | 통계 화면 | `js/studyStadium_stats.js`, `js/studyStadium_data.js`, `html/studyStadium_stats.html` |
 
@@ -38,7 +38,7 @@
 1. 함수명은 `camelCase`로 작성하고, 함수 위에 기능 설명 주석을 작성합니다.
 2. Supabase 호출은 `js/services/` 안의 서비스 함수로 분리합니다.
 3. 다른 담당자의 파일이나 함수명을 수정하기 전 먼저 공유합니다.
-4. 공부 기록은 `recordService.js`를 통해 저장합니다.
+4. 공부 기록은 `record-service.js`를 통해 저장합니다.
 5. 작업이 끝나면 변경 파일과 테스트 결과를 팀원에게 알려줍니다.
 
 ## 4. 진행 상황 메모
@@ -55,11 +55,11 @@
 
 ### 새로 추가된 연동 (HA 파일 참고, 수정 없음)
 
-- 메인 화면에서 `js/lib/supabaseClient.js`, `js/services/recordService.js`를 **읽기 전용으로 import**하여, 오늘 경기를 이미 끝냈는지(`is_finished`) 확인 → 끝냈으면 "경기하러 가기" 버튼 비활성화
+- 메인 화면에서 `js/lib/supabase-client.js`, `js/services/record-service.js`를 **읽기 전용으로 import**하여, 오늘 경기를 이미 끝냈는지(`is_finished`) 확인 → 끝냈으면 "경기하러 가기" 버튼 비활성화
 
 ### 공유 필요 (HA에게 꼭 전달할 것)
 
-- [ ] `js/Login.js`의 로그인 성공 후 이동 경로를 `Timer.html` → `studyStadium_main.html`로 수정함. 협업 규칙 3번(다른 담당자 파일 수정 전 공유)과 달리 먼저 고치고 나중에 알리는 순서가 됐으니, HA에게 이 변경 사실을 꼭 전달할 것.
+- [ ] `js/login.js`의 로그인 성공 후 이동 경로를 `timer.html` → `studyStadium_main.html`로 수정함. 협업 규칙 3번(다른 담당자 파일 수정 전 공유)과 달리 먼저 고치고 나중에 알리는 순서가 됐으니, HA에게 이 변경 사실을 꼭 전달할 것.
 
 ## 5. 커밋 규칙
 
