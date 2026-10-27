@@ -55,9 +55,14 @@ input {
 }
 
 /* ---------- 상단: 위에서 내려다본 경기장 ---------- */
+/* 로그인·회원가입 화면의 경기장 크기를 똑같이 맞추려고 높이를 고정합니다. */
 .pitch {
     position: relative;
-    padding: 38px 34px 40px;
+    height: 214px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 34px;
     color: #FFFFFF;
     /* 잔디 깎은 줄무늬 */
     background: repeating-linear-gradient(90deg, var(--stadium) 0 44px, var(--stripe) 44px 88px);
@@ -119,12 +124,28 @@ input {
 }
 
 /* ---------- 폼 ---------- */
+/* 회원가입 폼(입력칸 + 중복 확인 안내)에 맞춰 로그인 폼도 같은 높이를 씁니다.
+   남는 공간은 입력칸과 버튼 사이로 갑니다. */
 .auth-form {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
     padding: 34px 34px 30px;
 }
 
+.auth-form .form-message {
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+/* 입력칸 사이 간격은 로그인·회원가입이 똑같습니다.
+   회원가입의 중복 확인 안내 문구는 이 간격 안에 겹쳐서 표시해요. */
+.field-group {
+    position: relative;
+}
+
 .field-group + .field-group {
-    margin-top: 18px;
+    margin-top: 30px;
 }
 
 label {
@@ -224,6 +245,13 @@ input:focus {
     font-weight: 600;
 }
 
+.name-status {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin: 5px 0 0 2px;
+}
+
 .form-message {
     margin: 16px 0 10px;
     text-align: center;
@@ -288,7 +316,8 @@ input:focus {
 
 @media (max-width: 400px) {
     .pitch {
-        padding: 26px 22px 28px;
+        height: 172px;
+        padding: 0 22px;
     }
 
     .pitch h1 {
@@ -296,6 +325,7 @@ input:focus {
     }
 
     .auth-form {
+        min-height: 380px;
         padding: 24px 20px 20px;
     }
 }
