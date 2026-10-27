@@ -112,8 +112,9 @@ body {
 
 /* ---- 본문 공통 ---- */
 
+/* 아래쪽 여백 16px: 마지막 카드와 하단 탭바 사이를 카드끼리 간격과 똑같이 띄웁니다. */
 .main-content {
-  padding: 16px 20px 0;
+  padding: 16px 20px 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
