@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
     growthStadiumCount.textContent = counts.stadium;
 
     // 디데이: 시작일로부터 며칠째인지 + 그 중 며칠을 공부했는지
-    const daysSinceStart = getDaysSinceStart();
+    const daysSinceStart = stats.daysSinceStart;
     ddayStatus.textContent =
       '스타디움을 시작한 지 ' + daysSinceStart + '일째, 그 중 ' + stats.matchDays + '일 공부했어요.';
   }

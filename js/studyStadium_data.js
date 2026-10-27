@@ -176,9 +176,28 @@ function computeStats(data, settings) {
     }
   }
 
+  // 시작일 = 첫 공부 기록 날짜 (기록이 없으면 오늘). 디데이와 흙 일수가 같은 기준을 씁니다.
+  const todayKey = formatDateKey(today);
+  let startKey = todayKey;
+  for (const dateKey in data) {
+    if (dateKey < startKey) startKey = dateKey;
+  }
+  const todayStart = new Date(today);
+  todayStart.setHours(0, 0, 0, 0);
+  const daysSinceStart = Math.round((todayStart - new Date(startKey + 'T00:00:00')) / (1000 * 60 * 60 * 24)) + 1;
+
+  // 흙 = 시작일부터 어제까지 중 공부 안 한 날 (오늘은 아직 진행 중이라 세지 않아요)
+  // 공부 안 한 날은 기록 자체가 없어서, 지난 날 수에서 공부한 날 수를 빼서 구합니다.
+  const studiedToday = getTodayRecord(data).sets > 0;
+  const pastDays = daysSinceStart - 1;
+  const pastMatchDays = matchDays - (studiedToday ? 1 : 0);
+  stageCounts.soil = Math.max(0, pastDays - pastMatchDays);
+
   const avgMinutes = matchDays > 0 ? Math.round(totalMinutes / matchDays) : 0;
 
   return {
+    startDate: startKey,
+    daysSinceStart: daysSinceStart,
     totalSets: totalSets,
     totalTimeLabel: pad2(Math.floor(totalMinutes / 60)) + 'H ' + pad2(totalMinutes % 60) + 'M',
     matchDays: matchDays,
