@@ -126,6 +126,31 @@
         .finish-modal-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 14px; place-items: center; border-radius: 50%; color: #fff; background: var(--flag); font-size: 26px; font-weight: 900; }
         .finish-modal-content h2 { margin-bottom: 10px; }
 
+        /* ---- 도움말 팝업 (경기 규칙) ---- */
+        .help-modal-content { width: min(100%, 380px); max-height: calc(100vh - 40px); overflow-y: auto; }
+        .help-head { display: flex; align-items: center; justify-content: space-between; }
+        .help-modal-content .help-head h2 { margin: 0; }
+        .help-close-x { width: 32px; height: 32px; border-radius: 50%; color: var(--text-muted); background: var(--track); font-size: 14px; }
+        .help-close-x:hover { color: var(--stadium); }
+        .help-intro { margin: 8px 0 16px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+
+        /* 경기 흐름: 세트는 진초록 점, 휴식은 연초록 작은 점으로 세로 줄에 이어 붙입니다. */
+        .help-timeline { position: relative; margin: 0; padding: 0 0 0 22px; list-style: none; }
+        .help-timeline::before { content: ''; position: absolute; top: 8px; bottom: 8px; left: 6px; width: 2px; background: var(--line); }
+        .help-timeline li { position: relative; display: flex; align-items: baseline; gap: 10px; padding: 5px 0; font-size: 13px; }
+        .help-timeline li::before { content: ''; position: absolute; top: 50%; left: -22px; width: 14px; height: 14px; border-radius: 50%; background: var(--stadium); transform: translateY(-50%); }
+        .help-timeline strong { min-width: 40px; color: var(--text-strong); font-weight: 800; }
+        .help-timeline span { color: var(--text-muted); }
+        .help-timeline .help-break::before { left: -19px; width: 8px; height: 8px; background: var(--leaf); }
+        .help-timeline .help-break strong { color: var(--leaf); font-weight: 700; }
+        .help-timeline .is-half span { color: var(--text-strong); font-weight: 700; }
+
+        .help-notes { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); list-style: none; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
+        .help-notes strong { display: block; color: var(--text-strong); font-size: 13px; font-weight: 800; }
+
+        .help-close { width: 100%; min-height: 48px; margin-top: 20px; border-radius: 12px; font-size: 14px; font-weight: 800; }
+        .help-close:focus-visible, .help-close-x:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
         /* ---- 뒤로 가기 확인 팝업 (경기장 전광판) ---- */
         .leave-modal-content { width: min(100%, 340px); overflow: hidden; border-radius: var(--radius-lg); background: var(--card); }
         /* 로그인 화면 경기장과 같은 잔디 줄무늬 */

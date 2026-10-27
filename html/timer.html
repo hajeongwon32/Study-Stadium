@@ -21,7 +21,7 @@
                         <h1 id="match-title">TODAY'S MATCH</h1>
                     </div>
                     <div class="header-actions">
-                        <button class="icon-button" type="button" aria-label="도움말">?</button>
+                        <button id="help-button" class="icon-button" type="button" aria-label="도움말">?</button>
                         <button id="back-button" class="icon-button" type="button" aria-label="메인 화면으로 돌아가기">←</button>
                     </div>
                 </div>
@@ -119,6 +119,36 @@
                         </div>
                     </div>
                 </div>
+                <!-- 도움말 모달: 경기 규칙 -->
+                <div id="helpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+                    <div class="modal-content help-modal-content">
+                        <div class="help-head">
+                            <h2 id="help-title">경기 규칙</h2>
+                            <button id="helpCloseX" class="help-close-x" type="button" aria-label="닫기">✕</button>
+                        </div>
+                        <p class="help-intro">하루 공부를 축구 한 경기처럼 4세트로 나눠서 진행해요.</p>
+
+                        <ol class="help-timeline">
+                            <li class="help-set"><strong>1SET</strong><span>집중</span></li>
+                            <li class="help-break"><strong>5분</strong><span>하이드레이션 브레이크</span></li>
+                            <li class="help-set"><strong>2SET</strong><span>집중</span></li>
+                            <li class="help-break is-half"><strong>10분</strong><span>하프 타임</span></li>
+                            <li class="help-set"><strong>3SET</strong><span>집중</span></li>
+                            <li class="help-break"><strong>5분</strong><span>하이드레이션 브레이크</span></li>
+                            <li class="help-set"><strong>4SET</strong><span>집중 → FULL TIME</span></li>
+                        </ol>
+
+                        <ul class="help-notes">
+                            <li><strong>시간 설정</strong> 세트 시작 전에 집중 시간을 1~90분으로 바꿀 수 있어요. (기본 25분)</li>
+                            <li><strong>자동 진행</strong> 세트가 끝나면 알람과 함께 휴식이, 휴식이 끝나면 다음 세트가 바로 시작돼요.</li>
+                            <li><strong>오늘은 여기까지</strong> 세트 중에 누르면 지금까지 한 시간을 기록하고, 노트를 쓴 뒤 오늘 경기를 끝내요.</li>
+                            <li><strong>중간에 나가기</strong> 세트 도중에 화면을 떠나면 그 세트는 기록되지 않아요.</li>
+                        </ul>
+
+                        <button id="helpCloseBtn" class="modal-save help-close" type="button">확인</button>
+                    </div>
+                </div>
+
                 <!-- 세트 진행 중 뒤로 가기 확인 모달 -->
                 <div id="leaveModal" class="modal" role="alertdialog" aria-modal="true" aria-labelledby="leave-title" aria-describedby="leave-message">
                     <div class="leave-modal-content">

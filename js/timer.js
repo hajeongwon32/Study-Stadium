@@ -38,6 +38,10 @@ if (!session) {
         const toggleTimerButton = document.querySelector('#toggle-timer');
         const finishTodayButton = document.querySelector('#finish-today');
         const backButton = document.querySelector('#back-button');
+        const helpButton = document.querySelector('#help-button');
+        const helpModal = document.querySelector('#helpModal');
+        const helpCloseButton = document.querySelector('#helpCloseBtn');
+        const helpCloseX = document.querySelector('#helpCloseX');
         const leaveModal = document.querySelector('#leaveModal');
         const leaveCancelButton = document.querySelector('#leaveCancelBtn');
         const leaveConfirmButton = document.querySelector('#leaveConfirmBtn');
@@ -530,6 +534,33 @@ if (!session) {
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && settingModal.classList.contains('is-open')) {
                 closeSettingModal();
+            }
+        });
+
+        /* =========================
+           도움말 (경기 규칙)
+        ========================= */
+        // 도움말 모달을 엽니다. 타이머는 멈추지 않습니다.
+        const openHelpModal = () => {
+            helpModal.classList.add('is-open');
+            helpCloseButton.focus();
+        };
+
+        // 도움말 모달을 닫습니다.
+        const closeHelpModal = () => {
+            helpModal.classList.remove('is-open');
+            helpButton.focus();
+        };
+
+        helpButton.addEventListener('click', openHelpModal);
+        helpCloseButton.addEventListener('click', closeHelpModal);
+        helpCloseX.addEventListener('click', closeHelpModal);
+        helpModal.addEventListener('click', (event) => {
+            if (event.target === helpModal) closeHelpModal();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && helpModal.classList.contains('is-open')) {
+                closeHelpModal();
             }
         });
 
