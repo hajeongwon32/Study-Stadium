@@ -1,14 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap');
-
+/* 메인 화면(style.css)과 같은 팔레트·글꼴·모서리를 사용합니다. */
         :root {
-            --forest: #205638;
-            --forest-dark: #173e29;
-            --mint: #dff6ed;
-            --cyan: #56bfdc;
-            --ink: #173d2b;
-            --muted: #8b9bae;
-            --line: #e1e7ee;
-            --page: #f6faf9;
+            --stadium: #173D2B;
+            --stadium-dark: #0F2C1F;
+            --leaf: #65A878;
+            --sprout: #CFE6D5;
+            --mint: #EEF6F0;
+            --flag: #B94B55;
+
+            --bg: #F7F6FB;
+            --card: #FFFFFF;
+            --line: #E5EAE7;
+            --track: #F0F1F0;
+
+            --text-strong: #173D2B;
+            --text-title: #243F31;
+            --text-muted: #66736C;
+            --text-muted-2: #748077;
+            --text-faint: #98A09C;
+
+            --radius-lg: 20px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+
+            --shadow-card: 0 6px 20px rgba(23, 61, 43, 0.08);
+            --focus-ring: 0 0 0 3px rgba(23, 61, 43, 0.18);
+
+            /* 예전 이름을 쓰는 곳을 위해 남겨둡니다. */
+            --forest: var(--stadium);
+            --ink: var(--text-strong);
         }
 
         * { box-sizing: border-box; }
@@ -17,134 +36,115 @@
             min-width: 320px;
             min-height: 100vh;
             margin: 0;
-            color: var(--ink);
-            font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
-            background: linear-gradient(135deg, #f7fbfa 0%, #eef7f4 100%);
+            color: var(--text-strong);
+            font-family: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+            background: var(--bg);
         }
 
-        button, a { font: inherit; }
+        button, a, input, textarea { font: inherit; }
         button { border: 0; cursor: pointer; }
 
-        .match-shell { width: min(100%, 588px); min-height: 100vh; margin: 10px auto; }
-        .match-card { min-height: 100vh; overflow: hidden; background: var(--page); box-shadow: 0 0 0 3px #dfdee2; }
-        .match-header { padding: 34px 39px 28px; background: #fff; }
-        .title-row { display: flex; align-items: center; gap: 7px; }
-        .status-dot { width: 28px; height: 28px; border-radius: 50%; background: #edf9f1; }
-        .title-row h1 { margin: 0; color: var(--ink); font-family: Jua, sans-serif; font-size: 29px; letter-spacing: 1px; }
-        .header-actions { display: flex; gap: 11px; margin-left: auto; }
-        .icon-button { display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid #dce5ef; border-radius: 50%; color: #485870; background: #f8fafc; font-size: 27px; font-weight: 700; text-decoration: none; }
-        .icon-button:first-child { font-family: Georgia, serif; }
-        .icon-button:hover, .icon-button:focus-visible { outline: 3px solid rgba(86, 191, 220, .35); outline-offset: 2px; }
+        /* ---- 화면 틀 (메인 화면 .app과 같은 폭) ---- */
+        .match-shell { max-width: 480px; min-height: 100vh; margin: 0 auto; background: var(--bg); }
+        .match-card { min-height: 100vh; padding-bottom: 40px; background: var(--bg); }
 
-        /* SET 진행 상태 영역 수정 */
-        .set-progress { position: relative; display: flex; justify-content: space-between; padding: 40px 38px 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #fff; }
-        
-        /* 진행선의 좌우 위치를 동그라미 중심점(79px)에 정확히 맞춤 */
-        .progress-line { position: absolute; top: 57px; right: 79px; left: 79px; height: 3px; background: var(--line); }
-        .progress-line span { display: block; width: 0%; height: 100%; background: var(--forest); transition: width .4s ease-in-out; }
-        
-        .progress-step { z-index: 1; display: flex; width: 82px; flex-direction: column; align-items: center; gap: 11px; color: #a1aec1; text-align: center; }
-        .step-marker { display: grid; width: 36px; height: 36px; place-items: center; border: 3px solid #cbd5e3; border-radius: 50%; color: #fff; background: #fff; font-size: 16px; transition: all .3s ease; }
-        .progress-step.complete { color: var(--ink); }
-        .progress-step.complete .step-marker { border-color: var(--forest); background: var(--forest); }
-        .progress-step.current { color: #3b91ae; }
-        .progress-step.current .step-marker { border-color: var(--cyan); color: var(--cyan); background: #fff; }
-        .progress-step strong { font-size: 14px; line-height: 1.25; }
+        @media (min-width: 700px) {
+            .match-shell { min-height: auto; margin: 20px auto; overflow: hidden; border-radius: 24px; box-shadow: 0 16px 40px rgba(23, 61, 43, 0.12); }
+            .match-card { min-height: auto; }
+            .title-row h1 { font-size: 24px; }
+        }
 
-        .match-content { padding: 86px 68px 42px; }
-        
-        .break-label { 
+        /* ---- 헤더 (메인 화면 .app-header와 같은 모양) ---- */
+        .match-header { padding: 18px 20px 20px; background: var(--card); }
+        .title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .titles { display: flex; flex-direction: column; gap: 4px; }
+        .eyebrow { margin: 0; color: var(--text-muted-2); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; }
+        .title-row h1 { margin: 0; color: var(--text-strong); font-size: 21px; font-weight: 800; }
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .icon-button { display: flex; width: 40px; height: 40px; flex-shrink: 0; align-items: center; justify-content: center; padding: 0; border: 1px solid #DCE2DE; border-radius: 50%; color: #53615A; background: #F4F5F8; font-size: 18px; font-weight: 700; text-decoration: none; }
+        .icon-button:hover { color: var(--stadium); }
+        .icon-button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+        /* ---- SET 진행 상태 ---- */
+        .set-progress { position: relative; display: flex; justify-content: space-between; margin: 16px 20px 0; padding: 22px 16px 18px; border-radius: var(--radius-lg); background: var(--card); }
+
+        /* 진행선 좌우 끝을 첫/마지막 동그라미 중심에 맞춤 (안쪽 여백 + 다섯 칸 중 한 칸 폭의 절반) */
+        .progress-line { position: absolute; top: 37px; right: calc(16px + (100% - 32px) / 10); left: calc(16px + (100% - 32px) / 10); height: 3px; border-radius: 2px; background: var(--line); }
+        .progress-line span { display: block; width: 0%; height: 100%; border-radius: inherit; background: var(--stadium); transition: width .4s ease-in-out; }
+
+        .progress-step { z-index: 1; display: flex; flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 8px; color: var(--text-faint); text-align: center; }
+        .step-marker { display: grid; width: 32px; height: 32px; place-items: center; border: 3px solid var(--line); border-radius: 50%; color: #fff; background: var(--card); font-size: 14px; transition: all .3s ease; }
+        .progress-step.complete { color: var(--text-strong); }
+        .progress-step.complete .step-marker { border-color: var(--stadium); background: var(--stadium); }
+        .progress-step.current { color: var(--leaf); }
+        .progress-step.current .step-marker { border-color: var(--leaf); color: var(--leaf); background: var(--card); }
+        .progress-step strong { font-size: 12px; font-weight: 800; line-height: 1.25; }
+
+        /* ---- 본문 ---- */
+        .match-content { display: flex; flex-direction: column; gap: 16px; padding: 24px 20px 0; }
+
+        .break-label {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: fit-content; 
-            margin: 0 auto 16px; 
-            padding: 8px 22px; 
-            border: 1px solid #b8efd9; 
-            border-radius: 25px; 
-            color: var(--forest); 
-            background: #f1fff9; 
-            font-size: 16px; 
-            font-weight: 800; 
-            white-space: nowrap; 
+            width: fit-content;
+            margin: 0 auto;
+            padding: 7px 18px;
+            border-radius: 999px;
+            color: var(--stadium);
+            background: var(--sprout);
+            font-size: 14px;
+            font-weight: 800;
+            white-space: nowrap;
         }
-        .break-dot { 
-            display: inline-block; 
-            width: 12px; 
-            height: 12px; 
-            margin-right: 8px; 
-            border-radius: 50%; 
-            background: var(--forest); 
+        .break-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 8px;
+            border-radius: 50%;
+            background: var(--stadium);
             flex-shrink: 0;
         }
 
-        .timer-panel { position: relative; padding: 62px 28px 22px; border: 1px solid #dfe6ee; border-radius: 33px; text-align: center; background: #fff; box-shadow: 0 14px 25px rgba(36, 70, 61, .05); }
-        .setting-button { position: absolute; top: 20px; right: 24px; padding: 7px 12px; border: 1px solid #dce5ef; border-radius: 8px; color: #60758a; background: #f8fafc; font-size: 12px; font-weight: 700; }
-        .setting-button:hover, .setting-button:focus-visible { color: var(--forest); background: #eefaf5; outline: 3px solid rgba(86, 191, 220, .25); outline-offset: 2px; }
-        .timer-panel h2 { margin: 0 0 9px; color: #91a0b5; font-size: 16px; letter-spacing: 1px; }
-        #timer { display: block; color: #183d2b; font-family: Jua, sans-serif; font-size: clamp(76px, 16vw, 94px); line-height: 1.12; letter-spacing: 2px; }
-        .timer-track { height: 9px; margin: 14px auto 0; overflow: hidden; border-radius: 20px; background: #edf1f5; }
-        .timer-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--cyan); transition: width .3s linear; }
-        .timer-status { min-height: 20px; margin: 10px 0 0; color: #73869b; font-size: 13px; }
+        .timer-panel { position: relative; padding: 52px 20px 20px; border-radius: var(--radius-lg); text-align: center; background: var(--card); box-shadow: var(--shadow-card); }
+        .setting-button { position: absolute; top: 16px; right: 16px; padding: 6px 12px; border: 1px solid #DCE2DE; border-radius: 8px; color: var(--text-muted); background: #F4F5F8; font-size: 12px; font-weight: 700; }
+        .setting-button:hover { color: var(--stadium); }
+        .setting-button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+        .timer-panel h2 { margin: 0 0 6px; color: var(--text-muted); font-size: 13px; font-weight: 800; letter-spacing: 0.04em; }
+        #timer { display: block; color: var(--text-strong); font-size: clamp(64px, 18vw, 84px); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -0.02em; }
+        .timer-track { height: 10px; margin: 14px auto 0; overflow: hidden; border-radius: 5px; background: var(--line); }
+        .timer-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: var(--leaf); transition: width .3s linear; }
+        .timer-status { min-height: 18px; margin: 10px 0 0; color: var(--text-faint); font-size: 12px; }
 
-        .modal { position: fixed; z-index: 10; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(23, 61, 43, .35); }
+        /* ---- 팝업 (메인 화면 팝업과 같은 모양) ---- */
+        .modal { position: fixed; z-index: 10; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(23, 61, 43, 0.45); }
         .modal.is-open { display: flex; }
-        .modal-content { width: min(100%, 360px); padding: 28px; border-radius: 20px; background: #fff; box-shadow: 0 18px 45px rgba(23, 61, 43, .2); }
-        .modal-content h2 { margin: 0 0 24px; color: var(--ink); font-family: Jua, sans-serif; font-size: 24px; }
-        .finish-modal-content { padding: 30px 28px 25px; text-align: center; }
-        .finish-modal-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 14px; place-items: center; border-radius: 50%; color: #fff; background: #e2a54d; font-size: 27px; font-weight: 900; }
-        .finish-modal-content h2 { margin-bottom: 10px; font-size: 25px; }
-        .finish-modal-message { margin: 0; color: #73869b; font-size: 14px; line-height: 1.7; }
-        .note-modal-content h2 { margin-bottom: 10px; }
-        .note-modal-message { margin: 0 0 14px; color: #73869b; font-size: 14px; line-height: 1.6; }
-        #studyNoteInput { width: 100%; min-height: 132px; resize: vertical; padding: 12px; border: 1px solid #dce5ef; border-radius: 9px; color: var(--ink); font: inherit; font-size: 14px; line-height: 1.6; }
-        #studyNoteInput:focus { border-color: var(--cyan); outline: 3px solid rgba(86, 191, 220, .2); }
-        .modal-content label { display: block; margin-bottom: 8px; color: #60758a; font-size: 14px; font-weight: 700; }
-        .setting-input { display: flex; align-items: center; gap: 8px; }
-        .setting-input input { width: 100%; padding: 11px 12px; border: 1px solid #dce5ef; border-radius: 9px; color: var(--ink); font-size: 16px; }
-        .setting-input input:focus { border-color: var(--cyan); outline: 3px solid rgba(86, 191, 220, .2); }
-        .setting-input span { color: #60758a; font-size: 14px; white-space: nowrap; }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 26px; }
-        .modal-buttons button { min-width: 70px; padding: 10px 14px; border-radius: 9px; font-size: 14px; font-weight: 700; }
-        .modal-cancel { color: #60758a; background: #eef2f5; }
-        .modal-save { color: #fff; background: var(--forest); }
-        .modal-finish { color: #fff; background: #b65b55; }
-        .modal-finish:hover, .modal-finish:focus-visible { background: #984a45; }
-        .modal-buttons button:focus-visible { outline: 3px solid rgba(86, 191, 220, .35); outline-offset: 2px; }
-        
-        .break-tip { display: flex; align-items: center; gap: 17px; margin-top: 36px; padding: 21px 24px; border: 1px solid #bfe7d7; border-radius: 23px; background: linear-gradient(100deg, #eefaf5, #e2f3ef); }
-        .tip-icon { display: grid; width: 58px; height: 58px; flex: 0 0 58px; place-items: center; border-radius: 18px; color: #70d787; background: var(--forest); font-size: 32px; }
-        .break-tip strong { display: block; font-size: 17px; }
-        .break-tip p { margin: 5px 0 0; color: #6b8198; font-size: 14px; }
-        
-        .timer-actions { display: grid; gap: 10px; margin-top: 35px; }
-        .primary-action { min-height: 66px; border-radius: 24px; font-size: 21px; font-weight: 900; color: #fff; background: var(--forest); box-shadow: 0 9px 15px rgba(30, 83, 54, .18); }
-        .primary-action:hover, .primary-action:focus-visible { background: var(--forest-dark); }
-        .primary-action:focus-visible { outline: 3px solid rgba(86, 191, 220, .5); outline-offset: 3px; }
-        .finish-action { min-height: 48px; border: 1px solid #d9e2eb; border-radius: 18px; color: #718196; background: #fff; font-size: 15px; font-weight: 700; }
-        .finish-action:hover, .finish-action:focus-visible { color: #a14d4d; border-color: #e2bcbc; background: #fff8f8; }
-        .finish-action:disabled { cursor: wait; opacity: .55; }
-        .setting-button:disabled { cursor: not-allowed; color: #a7b2bf; border-color: #e5e9ee; background: #eef1f4; opacity: .75; }
-        .setting-button:disabled:hover, .setting-button:disabled:focus-visible { outline: none; }
+        .modal-content { width: min(100%, 360px); padding: 24px; border-radius: var(--radius-lg); background: var(--card); }
+        .modal-content h2 { margin: 0 0 20px; color: var(--stadium); font-size: 19px; font-weight: 800; }
+        .finish-modal-content { padding: 28px 24px 24px; text-align: center; }
+        .finish-modal-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 14px; place-items: center; border-radius: 50%; color: #fff; background: var(--flag); font-size: 26px; font-weight: 900; }
+        .finish-modal-content h2 { margin-bottom: 10px; }
 
-        @media (max-width: 480px) {
-            .match-card { box-shadow: 0 0 0 3px #665ce9; }
-            .match-header { padding: 25px 20px 20px; }
-            .title-row h1 { font-size: 24px; }
-            .icon-button { width: 45px; height: 45px; font-size: 22px; }
-            .set-progress { padding: 33px 13px 22px; }
-            
-            /* 모바일 환경 동그라미 중심점 반응형 조정 */
-            .progress-line { top: 50px; right: 44.5px; left: 44.5px; }
-            .progress-step { width: 63px; }
-            .step-marker { width: 35px; height: 35px; }
-            .progress-step strong { font-size: 12px; }
-            .match-content { padding: 66px 20px 35px; }
-            .timer-panel { padding-right: 18px; padding-left: 18px; }
-            .setting-button { top: 16px; right: 18px; }
-            .break-label { font-size: 14px; }
-            .break-tip { padding: 18px 15px; gap: 12px; }
-            .tip-icon { width: 48px; height: 48px; flex-basis: 48px; }
-            .break-tip strong { font-size: 14px; }
-            .break-tip p { font-size: 12px; }
+        /* ---- 안내 팁 ---- */
+        .break-tip { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--radius-lg); background: var(--card); }
+        .tip-icon { display: grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border-radius: 12px; color: var(--sprout); background: var(--stadium); font-size: 24px; }
+        .break-tip strong { display: block; color: var(--text-strong); font-size: 15px; font-weight: 800; }
+        .break-tip p { margin: 4px 0 0; color: var(--text-muted); font-size: 12px; }
+
+        /* ---- 버튼 (메인 화면 '경기하러 가기'와 같은 색·모서리) ---- */
+        .timer-actions { display: grid; gap: 10px; margin-top: 4px; }
+        .primary-action { min-height: 56px; border-radius: 12px; color: #fff; background: var(--stadium); font-size: 17px; font-weight: 800; }
+        .primary-action:hover { background: var(--stadium-dark); }
+        .primary-action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+        .finish-action { min-height: 48px; border: 1px solid #DCE2DE; border-radius: 12px; color: var(--text-muted); background: var(--card); font-size: 14px; font-weight: 700; }
+        .finish-action:hover, .finish-action:focus-visible { color: var(--flag); border-color: #E6C3C6; background: #FFF8F8; outline: none; }
+        .finish-action:disabled { cursor: wait; opacity: .55; }
+        .setting-button:disabled { cursor: not-allowed; color: var(--text-faint); border-color: var(--line); background: var(--track); opacity: .75; }
+        .setting-button:disabled:hover, .setting-button:disabled:focus-visible { box-shadow: none; }
+
+        @media (max-width: 360px) {
+            .set-progress { padding-right: 10px; padding-left: 10px; }
+            .progress-line { right: calc(10px + (100% - 20px) / 10); left: calc(10px + (100% - 20px) / 10); }
+            .progress-step strong { font-size: 11px; }
         }

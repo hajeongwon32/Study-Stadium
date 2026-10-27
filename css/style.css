@@ -42,16 +42,15 @@ body {
   padding-bottom: 40px;
 }
 
-/* ---- 태블릿 화면 ----*/
+/* ---- 태블릿·노트북 화면 ----*/
+/* 넓은 화면에서도 휴대폰 앱처럼 폭 480px로 가운데에 둡니다. (로그인 카드와 같은 폭) */
 @media (min-width: 700px) {
   .app {
-    max-width: 600px;
     margin: 20px auto;
     border-radius: 24px;
     box-shadow: 0 16px 40px rgba(23, 61, 43, 0.12);
   }
   .page-title { font-size: 24px; }
-  .calendar-grid { grid-template-rows: repeat(5, 36px); }
 }
 
 /* ---- 헤더 ---- */
@@ -617,19 +616,22 @@ body {
   background: #EAF1EC;
 }
 
+/* ---- 크기조절 ---- */
+/* 달력 기본 규칙(.calendar-grid)보다 뒤에 있어야 적용됩니다. */
 @media (min-width: 700px) {
-  .tab-bar { max-width: 600px; }
-  
-}/* ---- 크기조절 ---- */
+  .calendar-grid {
+    grid-template-rows: repeat(5, 48px);
+  }
+}
 @media (min-width: 1024px) {
   .card {
-    padding: 32px 28px;
+    padding: 28px 24px;
   }
   .calendar-grid {
-    grid-template-rows: repeat(5, 70px);
+    grid-template-rows: repeat(5, 50px);
   }
   .card.raised {
-    padding-bottom: 36px;
+    padding-bottom: 32px;
   }
 }
 /* ---- 달력 날짜 클릭 가능 표시 (팝업 자체는 정원이 담당) ---- */
