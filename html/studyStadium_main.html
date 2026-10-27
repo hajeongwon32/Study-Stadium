@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Study Stadium</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/match-report.css">
 </head>
 <body>
   <div class="app">
@@ -195,9 +196,42 @@
         <button class="btn-close-modal" id="settingsSaveBtn">저장</button>
       </div>
     </div>
+
+    <!-- 날짜별 경기 리포트 팝업 (달력 날짜 클릭) -->
+    <div class="modal-overlay" id="reportOverlay" hidden>
+      <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+        <div class="report-head">
+          <h2 class="report-title" id="reportTitle">MATCH REPORT</h2>
+        </div>
+
+        <p class="report-date" id="reportDate"></p>
+
+        <dl class="report-list">
+          <div class="report-item">
+            <dt>경기 결과</dt>
+            <dd id="reportSets"></dd>
+          </div>
+          <div class="report-item">
+            <dt>집중 시간</dt>
+            <dd id="reportTime"></dd>
+          </div>
+          <div class="report-item">
+            <dt>FIELD STATUS</dt>
+            <dd id="reportStage"></dd>
+          </div>
+          <div class="report-item">
+            <dt>STUDY NOTE</dt>
+            <dd><p class="report-note" id="reportNote"></p></dd>
+          </div>
+        </dl>
+
+        <button class="btn-close-modal" id="reportCloseBtn">닫기</button>
+      </div>
+    </div>
   </div>
 
   <script src="../js/studyStadium_data.js"></script>
   <script type="module" src="../js/studyStadium_main.js"></script>
+  <script type="module" src="../js/match-report.js"></script>
 </body>
 </html>
