@@ -642,3 +642,37 @@ body {
   outline: 2px solid var(--flag);
   outline-offset: -2px;
 }
+
+/* ---- 아이콘 버튼 설명 말풍선 (마우스를 올리거나 키보드로 포커스하면 표시) ---- */
+[data-tooltip] { position: relative; }
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 20;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #FFFFFF;
+  background: #173D2B;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+/* 화면 오른쪽 끝 버튼은 말풍선이 화면 밖으로 나가지 않게 오른쪽에 맞춥니다. */
+.header-actions > [data-tooltip]:last-child::after {
+  left: auto;
+  right: 0;
+  transform: translateY(-4px);
+}
+@media (hover: hover) {
+  [data-tooltip]:hover::after { opacity: 1; transform: translate(-50%, 0); }
+  .header-actions > [data-tooltip]:last-child:hover::after { transform: translateY(0); }
+}
+[data-tooltip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.header-actions > [data-tooltip]:last-child:focus-visible::after { transform: translateY(0); }
