@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Study Stadium</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/profile-menu.css">
   <link rel="stylesheet" href="../css/match-report.css">
 </head>
 <body>
@@ -16,7 +17,15 @@
           <h1 class="page-title">MY STUDY STADIUM</h1>
         </div>
         <div class="header-actions">
-          <button class="help-btn" id="settingsBtn" aria-label="설정">⚙</button>
+          <div class="profile-menu">
+            <button class="profile-btn" id="profileBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="내 계정 메뉴">
+              <span aria-hidden="true">⚽</span>
+              <span class="profile-name" id="profileName">선수</span>
+            </button>
+            <div class="profile-dropdown" id="profileDropdown" role="menu" hidden>
+              <button class="profile-dropdown-item" id="logoutBtn" type="button" role="menuitem">로그아웃</button>
+            </div>
+          </div>
           <button class="help-btn" id="helpBtn" aria-label="도움말">?</button>
         </div>
       </header>
@@ -175,28 +184,6 @@
       </div>
     </div>
 
-    <!-- 집중/휴식 시간 설정 팝업 -->
-    <div class="modal-overlay" id="settingsOverlay" hidden>
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <div class="modal-head">
-          <h2 class="modal-title" id="settingsTitle">시간 설정</h2>
-          <button class="modal-close-x" id="settingsCloseX" aria-label="닫기">✕</button>
-        </div>
-
-        <div class="settings-field">
-          <label for="focusMinutesInput">집중 시간 (분)</label>
-          <input type="number" id="focusMinutesInput" min="1" max="180" step="1" value="50">
-        </div>
-        <div class="settings-field">
-          <label for="breakMinutesInput">휴식 시간 (분)</label>
-          <input type="number" id="breakMinutesInput" min="1" max="60" step="1" value="10">
-        </div>
-        <p class="card-sub">다음 세트 시작부터 적용돼요.</p>
-
-        <button class="btn-close-modal" id="settingsSaveBtn">저장</button>
-      </div>
-    </div>
-
     <!-- 날짜별 경기 리포트 팝업 (달력 날짜 클릭) -->
     <div class="modal-overlay" id="reportOverlay" hidden>
       <div class="modal-card report-card" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
@@ -233,5 +220,6 @@
   <script src="../js/studyStadium_data.js"></script>
   <script type="module" src="../js/studyStadium_main.js"></script>
   <script type="module" src="../js/match-report.js"></script>
+  <script type="module" src="../js/profile-menu.js"></script>
 </body>
 </html>

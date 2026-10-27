@@ -100,3 +100,39 @@ export const signIn = async ({ nickname, password }) => {
     return { success: false, error: error.message };
   }
 };
+
+/**
+ * 로그인한 사용자의 닉네임 조회 (profiles 테이블)
+ * @param {string} userId
+ * @returns {Promise<string>} 닉네임, 없으면 빈 문자열
+ */
+export const getMyNickname = async (userId) => {
+  if (!userId) return "";
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('nickname')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('닉네임 조회 실패:', error.message);
+    return "";
+  }
+
+  return data?.nickname || "";
+};
+
+/**
+ * 로그아웃
+ */
+export const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error('로그아웃 실패:', error.message);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+};

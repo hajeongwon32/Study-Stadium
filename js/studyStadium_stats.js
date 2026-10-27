@@ -23,15 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const helpCloseBtn = document.getElementById('helpCloseBtn');
   const helpCloseX = document.getElementById('helpCloseX');
 
-  const settingsBtn = document.getElementById('settingsBtn');
-  const settingsOverlay = document.getElementById('settingsOverlay');
-  const settingsCloseX = document.getElementById('settingsCloseX');
-  const settingsSaveBtn = document.getElementById('settingsSaveBtn');
-  const focusMinutesInput = document.getElementById('focusMinutesInput');
-  const breakMinutesInput = document.getElementById('breakMinutesInput');
 
   const studyData = loadData();
-  let settings = loadSettings();
+  const settings = loadSettings();
   const stats = computeStats(studyData, settings);
 
   statTotalSets.textContent = stats.totalSets;
@@ -70,34 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.target === helpOverlay) closeHelp();
   });
 
-  // ---- 집중/휴식 시간 설정 팝업 ----
-  function openSettings() {
-    focusMinutesInput.value = settings.focusMinutes;
-    breakMinutesInput.value = settings.breakMinutes;
-    settingsOverlay.hidden = false;
-  }
-  function closeSettings() { settingsOverlay.hidden = true; }
-
-  function saveSettingsFromInputs() {
-    let focusMinutes = Number(focusMinutesInput.value);
-    let breakMinutes = Number(breakMinutesInput.value);
-    if (!focusMinutes || focusMinutes < 1) focusMinutes = DEFAULT_FOCUS_MINUTES;
-    if (!breakMinutes || breakMinutes < 1) breakMinutes = DEFAULT_BREAK_MINUTES;
-
-    settings = { focusMinutes: focusMinutes, breakMinutes: breakMinutes };
-    saveSettings(settings);
-    closeSettings();
-  }
-
-  settingsBtn.addEventListener('click', openSettings);
-  settingsCloseX.addEventListener('click', closeSettings);
-  settingsOverlay.addEventListener('click', function (e) {
-    if (e.target === settingsOverlay) closeSettings();
-  });
-  settingsSaveBtn.addEventListener('click', saveSettingsFromInputs);
-
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && !helpOverlay.hidden) closeHelp();
-    if (e.key === 'Escape' && !settingsOverlay.hidden) closeSettings();
   });
 });
