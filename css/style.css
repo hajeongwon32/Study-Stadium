@@ -416,16 +416,24 @@ body {
 .growth-list {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+/* 단계 이름 · 막대 · 일수를 한 줄에 놓아서 어느 막대가 어느 단계인지 헷갈리지 않게 합니다.
+   (HTML 순서는 막대 → 이름·일수지만, grid 위치로 이름을 맨 앞에 둡니다) */
+.growth-row {
+  display: grid;
+  grid-template-columns: 52px 1fr 36px;
+  align-items: center;
   gap: 10px;
 }
-.growth-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+.growth-meta { display: contents; }
+.growth-meta span:first-child { grid-column: 1; grid-row: 1; }
+.growth-track { grid-column: 2; grid-row: 1; }
+.growth-meta span:last-child { grid-column: 3; grid-row: 1; text-align: right; }
+
 .growth-track {
-  height: 20px;
-  border-radius: 10px;
+  height: 12px;
+  border-radius: 6px;
   background: var(--track-2);
   overflow: hidden;
 }
@@ -436,23 +444,40 @@ body {
   transition: width 0.25s ease;
 }
 .growth-fill.soil { background: var(--soil); }
-.growth-fill.sprout { background: var(--sprout); }
+/* 싹 색은 빈 막대(연회색)와 비슷해서 테두리를 넣어 채워진 게 보이게 합니다. */
+.growth-fill.sprout { background: var(--sprout); box-shadow: inset 0 0 0 1px var(--leaf); }
 .growth-fill.leaf { background: var(--leaf); }
 .growth-fill.stadium { background: var(--stadium); }
-.growth-meta {
+/* 단계 이름 앞에 잔디 색 점을 붙여 막대 색과 바로 연결되게 합니다. */
+.growth-meta span:first-child {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-.growth-meta span:first-child {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-faint-2);
-}
-.growth-meta span:last-child {
-  font-size: 10px;
-  font-weight: 700;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
   color: var(--text-strong);
+}
+.growth-meta span:first-child::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  background: var(--soil);
+}
+.growth-row:nth-child(2) .growth-meta span:first-child::before { background: var(--sprout); box-shadow: inset 0 0 0 1px var(--leaf); }
+.growth-row:nth-child(3) .growth-meta span:first-child::before { background: var(--leaf); }
+.growth-row:nth-child(4) .growth-meta span:first-child::before { background: var(--stadium); }
+.growth-meta span:last-child {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-strong);
+}
+.growth-meta span:last-child::after {
+  content: '일';
+  margin-left: 1px;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 /* ---- 상태 문구 ---- */
