@@ -26,6 +26,28 @@ export const getTodayStudyRecord = async (userId) => {
 	return data;
 };
 
+// 로그인한 사용자의 공부 기록을 기간별로 조회합니다. (날짜는 YYYY-MM-DD, 생략 시 전체 기간)
+export const getStudyRecords = async ({ userId, startDate, endDate } = {}) => {
+	if (!userId) return [];
+
+	let query = supabase
+		.from('study_records')
+		.select('date, sets, total_time, note, is_finished')
+		.eq('user_id', userId)
+		.order('date', { ascending: true });
+
+	if (startDate) query = query.gte('date', startDate);
+	if (endDate) query = query.lte('date', endDate);
+
+	const { data, error } = await query;
+
+	if (error) {
+		throw new Error(`공부 기록 조회 실패: ${error.message}`);
+	}
+
+	return data;
+};
+
 // 오늘 공부 기록을 종료 상태로 표시합니다.
 export const markTodayStudyFinished = async (userId) => {
 	if (!userId) {
