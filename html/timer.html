@@ -119,6 +119,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- 세트 진행 중 뒤로 가기 확인 모달 -->
+                <div id="leaveModal" class="modal" role="alertdialog" aria-modal="true" aria-labelledby="leave-title" aria-describedby="leave-message">
+                    <div class="leave-modal-content">
+                        <!-- 전광판: 지금 세트와 남은 시간 -->
+                        <div class="leave-board" aria-hidden="true">
+                            <span class="leave-live"><span class="leave-live-dot"></span><span id="leaveSetLabel">1SET</span> · LIVE</span>
+                            <span id="leaveClock" class="leave-clock">25:00</span>
+                        </div>
+                        <div class="leave-body">
+                            <h2 id="leave-title">경기가 아직 끝나지 않았어요</h2>
+                            <p id="leave-message">나가면 이 세트는 기록되지 않아요.</p>
+                            <button id="leaveCancelBtn" class="leave-stay" type="button">계속 뛰기</button>
+                            <button id="leaveConfirmBtn" class="leave-exit" type="button">그래도 나갈게요</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- TIP -->
                 <aside class="break-tip">
                     <span class="tip-icon" aria-hidden="true">♧</span>

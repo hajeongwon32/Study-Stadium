@@ -126,6 +126,43 @@
         .finish-modal-icon { display: grid; width: 48px; height: 48px; margin: 0 auto 14px; place-items: center; border-radius: 50%; color: #fff; background: var(--flag); font-size: 26px; font-weight: 900; }
         .finish-modal-content h2 { margin-bottom: 10px; }
 
+        /* ---- 뒤로 가기 확인 팝업 (경기장 전광판) ---- */
+        .leave-modal-content { width: min(100%, 340px); overflow: hidden; border-radius: var(--radius-lg); background: var(--card); }
+        /* 로그인 화면 경기장과 같은 잔디 줄무늬 */
+        .leave-board { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; color: #fff; background: repeating-linear-gradient(90deg, var(--stadium) 0 34px, #1D4834 34px 68px); }
+        .leave-live { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; opacity: 0.85; }
+        .leave-live-dot { width: 8px; height: 8px; border-radius: 50%; background: #E25B66; animation: leave-blink 1.2s ease-in-out infinite; }
+        .leave-clock { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+        @keyframes leave-blink { 50% { opacity: 0.25; } }
+        @media (prefers-reduced-motion: reduce) { .leave-live-dot { animation: none; } }
+
+        .leave-body { display: flex; flex-direction: column; padding: 22px 22px 14px; }
+        .leave-body h2 { margin: 0; color: var(--text-strong); font-size: 18px; font-weight: 800; }
+        .leave-body p { margin: 6px 0 20px; color: var(--text-muted); font-size: 14px; }
+        .leave-stay { min-height: 52px; border-radius: 12px; color: #fff; background: var(--stadium); font-size: 16px; font-weight: 800; }
+        .leave-stay:hover { background: var(--stadium-dark); }
+        .leave-exit { margin-top: 6px; padding: 12px; color: var(--text-muted); background: none; font-size: 13px; font-weight: 700; }
+        .leave-exit:hover { color: var(--flag); }
+        .leave-stay:focus-visible, .leave-exit:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 12px; }
+        .finish-modal-message { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+        .note-modal-content h2 { margin-bottom: 8px; }
+        .note-modal-message { margin: 0 0 14px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+        #studyNoteInput { width: 100%; min-height: 132px; resize: vertical; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text-strong); background: #F6F6FB; font-size: 14px; line-height: 1.6; }
+        #studyNoteInput:focus { border-color: var(--stadium); outline: none; background: #fff; }
+        .modal-content label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 12px; font-weight: 700; }
+        .setting-input { display: flex; align-items: center; gap: 8px; }
+        .setting-input input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text-strong); background: #F6F6FB; font-size: 15px; font-weight: 800; }
+        .setting-input input:focus { border-color: var(--stadium); outline: none; background: #fff; }
+        .setting-input span { color: var(--text-muted); font-size: 14px; white-space: nowrap; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+        .modal-buttons button { min-width: 70px; padding: 11px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 800; }
+        .modal-cancel { color: var(--text-muted); background: var(--track); }
+        .modal-save { color: #fff; background: var(--stadium); }
+        .modal-save:hover { background: var(--stadium-dark); }
+        .modal-finish { color: #fff; background: var(--flag); }
+        .modal-finish:hover, .modal-finish:focus-visible { background: #9E3F48; }
+        .modal-buttons button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
         /* ---- 안내 팁 ---- */
         .break-tip { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: var(--radius-lg); background: var(--card); }
         .tip-icon { display: grid; width: 44px; height: 44px; flex: 0 0 44px; place-items: center; border-radius: 12px; color: var(--sprout); background: var(--stadium); font-size: 24px; }

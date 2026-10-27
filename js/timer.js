@@ -38,6 +38,11 @@ if (!session) {
         const toggleTimerButton = document.querySelector('#toggle-timer');
         const finishTodayButton = document.querySelector('#finish-today');
         const backButton = document.querySelector('#back-button');
+        const leaveModal = document.querySelector('#leaveModal');
+        const leaveCancelButton = document.querySelector('#leaveCancelBtn');
+        const leaveConfirmButton = document.querySelector('#leaveConfirmBtn');
+        const leaveSetLabel = document.querySelector('#leaveSetLabel');
+        const leaveClock = document.querySelector('#leaveClock');
         const modeLabel = document.querySelector('#mode-label');
         const timerTitleText = document.querySelector('#timer-title-text');
         const breakStepTitle = document.querySelector('#break-step-title');
@@ -379,6 +384,7 @@ if (!session) {
                 pauseTimer();
             } else {
                 startTimer();
+                if (mode === 'study') armLeaveGuard();
                 if (mode === 'study') {
                     timerStatus.textContent = `${currentSet}SET 집중 시간이 진행 중입니다.`;
                 } else {
@@ -527,15 +533,93 @@ if (!session) {
             }
         });
 
-        // 메인 화면으로 돌아갑니다. 진행 중인 세트는 저장되지 않으니 한 번 확인합니다.
-        backButton.addEventListener('click', () => {
-            const isSetInProgress = mode === 'study' && hasStartedCurrentSet && !isMatchFinished;
+        /* =========================
+           세트 진행 중 나가기 막기
+        ========================= */
+        let isLeavingOnPurpose = false;
+        let isLeaveGuardArmed = false;
+        let leaveClockId = null;
 
-            if (isSetInProgress && !confirm('진행 중인 세트는 저장되지 않아요. 메인 화면으로 돌아갈까요?')) {
+        // 공부 세트를 시작했고 아직 끝나지 않았는지 확인합니다.
+        const isSetInProgress = () => mode === 'study' && hasStartedCurrentSet && !isMatchFinished;
+
+        // 메인 화면으로 돌아갑니다. (직접 나가는 거라 새로고침 확인창은 띄우지 않습니다)
+        const goToMain = () => {
+            isLeavingOnPurpose = true;
+            window.location.href = 'studyStadium_main.html';
+        };
+
+        // 방문 기록에 칸을 하나 끼워 둡니다. 브라우저 뒤로 가기(마우스 옆 버튼, 트랙패드 밀기 포함)를 하면
+        // 이 칸만 빠지고 화면은 그대로라서, 그때 확인 모달을 띄울 수 있습니다.
+        // 크롬은 클릭 없이 끼운 칸을 건너뛰기 때문에, 반드시 사용자가 버튼을 누를 때 호출합니다.
+        const armLeaveGuard = () => {
+            if (isLeaveGuardArmed) return;
+            history.pushState({ leaveGuard: true }, '');
+            isLeaveGuardArmed = true;
+        };
+
+        // 전광판에 지금 세트와 남은 시간을 표시합니다. (타이머는 팝업이 떠 있어도 계속 갑니다)
+        const updateLeaveBoard = () => {
+            leaveSetLabel.textContent = modeLabel.textContent;
+            leaveClock.textContent = timer.textContent;
+        };
+
+        // 뒤로 가기 확인 모달을 엽니다.
+        const openLeaveModal = () => {
+            updateLeaveBoard();
+            clearInterval(leaveClockId);
+            leaveClockId = setInterval(updateLeaveBoard, 500);
+            leaveModal.classList.add('is-open');
+            leaveCancelButton.focus();
+        };
+
+        // 뒤로 가기 확인 모달을 닫고 경기를 계속합니다. 브라우저 뒤로 가기로 빠진 칸도 다시 끼워 둡니다.
+        const closeLeaveModal = () => {
+            leaveModal.classList.remove('is-open');
+            clearInterval(leaveClockId);
+            leaveClockId = null;
+            if (isSetInProgress()) armLeaveGuard();
+            backButton.focus();
+        };
+
+        // 진행 중인 세트는 저장되지 않으니, 세트 중이면 확인 모달을 먼저 띄웁니다.
+        backButton.addEventListener('click', () => {
+            if (!isSetInProgress()) {
+                goToMain();
                 return;
             }
 
-            window.location.href = 'studyStadium_main.html';
+            openLeaveModal();
+        });
+
+        // 브라우저 뒤로 가기: 세트 중이면 모달을 띄우고, 아니면 원래대로 이전 화면으로 갑니다.
+        window.addEventListener('popstate', () => {
+            if (!isLeaveGuardArmed) return;
+            isLeaveGuardArmed = false;
+
+            if (isSetInProgress()) {
+                openLeaveModal();
+            } else {
+                history.back();
+            }
+        });
+
+        // 새로고침·탭 닫기·주소 직접 입력: 브라우저가 직접 만든 창을 허락하지 않아 기본 확인창을 띄웁니다.
+        window.addEventListener('beforeunload', (event) => {
+            if (isLeavingOnPurpose || !isSetInProgress()) return;
+            event.preventDefault();
+            event.returnValue = '';
+        });
+
+        leaveCancelButton.addEventListener('click', closeLeaveModal);
+        leaveConfirmButton.addEventListener('click', goToMain);
+        leaveModal.addEventListener('click', (event) => {
+            if (event.target === leaveModal) closeLeaveModal();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && leaveModal.classList.contains('is-open')) {
+                closeLeaveModal();
+            }
         });
 
         /* =========================
