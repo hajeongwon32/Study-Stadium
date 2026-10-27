@@ -25,15 +25,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
   // ---------- 데이터 불러오기 ----------
-  // 공부 기록은 서버(Supabase)에서 받아옵니다. 받아오기 전까지는 빈 기록으로 그려요.
   let studyData = {};
   const settings = loadSettings();
   let viewYear = new Date().getFullYear();
   let viewMonth = new Date().getMonth();
 
   // 오늘 경기를 서버(Supabase)에서 "이미 끝냄"으로 표시했는지 여부.
-  // 정원이의 타이머 화면에서 "오늘의 경기 끝내기"를 누르면 여기가 true가 돼요.
-  // 로그인 안 된 상태로 메인화면만 볼 때는 항상 false로 두고 기존 방식대로 동작해요.
   let todayFinishedOnServer = false;
 
   // ---------- 달력 그리기 ----------
@@ -55,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const isThisMonth = cellDate.getMonth() === viewMonth;
 
       if (!isThisMonth) {
-        // 이번 달이 아닌 칸(지난달/다음달)은 코너플래그로 표시합니다.
+        // 이번 달이 아닌 칸(지난달/다음달)은 코너플래그로 표시
         cell.classList.add('empty');
       } else {
         const dateKey = formatDateKey(cellDate);
@@ -98,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ---------- 통계 미리보기 (메인 화면 하단) ----------
+  //통계화면과 연동이 안 됨 실시간 화 할 것
   function renderStatsPreview() {
     const stats = computeStats(studyData, settings);
     statTotalSets.textContent = stats.totalSets;
@@ -163,13 +161,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ---------- 서버(Supabase)에서 공부 기록 + 오늘 완료 여부 받아오기 ----------
-  // 정원이 코드(getStudyRecords)를 그대로 가져다 씁니다.
   function loadStudyDataFromServer() {
     supabase.auth.getSession().then(function (result) {
       const session = result.data.session;
 
       if (!session) {
-        // 로그인 안 되어 있으면 기존 방식(로컬 기록 기준)대로 동작합니다.
         studyData = loadData();
         todayFinishedOnServer = false;
         renderAll();
@@ -191,14 +187,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ---------- 날짜 클릭 (역할 분담: 메인/클릭 = 나, 팝업 = 정원) ----------
-  // 클릭 가능한 날짜 칸을 누르면 'dayClicked' 이벤트를 쏴줍니다.
-  // 정원이는 자기 Match Report 팝업 코드에서 이 이벤트를 받아서(detail.dateKey) 팝업을 띄우면 됩니다.
-  // 예시:
-  //   document.addEventListener('dayClicked', function (e) {
-  //     const dateKey = e.detail.dateKey; // 예: '2026-10-10'
-  //     // 여기서 Match Report 팝업 열기
-  //   });
   calendarGrid.addEventListener('click', function (e) {
     const cell = e.target.closest('.calendar-cell');
     if (!cell || !cell.classList.contains('clickable')) return;
