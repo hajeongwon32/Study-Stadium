@@ -1,5 +1,5 @@
 import { supabase } from './lib/supabase-client.js';
-import { getTodayStudyRecord } from './services/record-service.js';
+import { getStudyRecords } from './services/record-service.js';
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const breakMinutesInput = document.getElementById('breakMinutesInput');
 
   // ---------- 데이터 불러오기 ----------
-  let studyData = loadData();
+  // 공부 기록은 서버(Supabase)에서 받아옵니다. 받아오기 전까지는 빈 기록으로 그려요.
+  let studyData = {};
   let settings = loadSettings();
   let viewYear = new Date().getFullYear();
   let viewMonth = new Date().getMonth();
@@ -145,24 +146,51 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // ---------- 오늘 경기가 서버에서 이미 끝났는지 확인 ----------
-  // 정원이 코드(getTodayStudyRecord)를 그대로 가져다 씁니다. 이 함수는 고치지 않아요.
-  function checkTodayFinishedOnServer() {
+  // ---------- 화면 전체 다시 그리기 ----------
+  function renderAll() {
+    renderCalendar();
+    renderStatsPreview();
+    updateMatchProgressUI();
+    updateNextInfoUI();
+  }
+
+  // ---------- 서버 기록을 달력·통계용 모양으로 바꾸기 ----------
+  // [{ date, sets, total_time, note, is_finished }] → { 'YYYY-MM-DD': { sets, minutes, note } }
+  function toStudyData(records) {
+    const data = {};
+    records.forEach(function (record) {
+      data[record.date] = {
+        sets: record.sets,
+        minutes: record.total_time,
+        note: record.note || '',
+      };
+    });
+    return data;
+  }
+
+  // ---------- 서버(Supabase)에서 공부 기록 + 오늘 완료 여부 받아오기 ----------
+  // 정원이 코드(getStudyRecords)를 그대로 가져다 씁니다.
+  function loadStudyDataFromServer() {
     supabase.auth.getSession().then(function (result) {
       const session = result.data.session;
 
       if (!session) {
-        // 로그인 안 되어 있으면 그냥 기존 방식(로컬 세트 수 기준)대로 동작합니다.
+        // 로그인 안 되어 있으면 기존 방식(로컬 기록 기준)대로 동작합니다.
+        studyData = loadData();
         todayFinishedOnServer = false;
-        updateNextInfoUI();
+        renderAll();
         return;
       }
 
-      getTodayStudyRecord(session.user.id).then(function (record) {
-        todayFinishedOnServer = Boolean(record && record.is_finished);
-        updateNextInfoUI();
+      getStudyRecords({ userId: session.user.id }).then(function (records) {
+        const todayKey = formatDateKey(new Date());
+        const todayRecord = records.find(function (record) { return record.date === todayKey; });
+
+        studyData = toStudyData(records);
+        todayFinishedOnServer = Boolean(todayRecord && todayRecord.is_finished);
+        renderAll();
       }).catch(function (error) {
-        console.error('오늘 완료 여부 확인 실패:', error);
+        console.error('공부 기록 불러오기 실패:', error);
       });
     }).catch(function (error) {
       console.error('로그인 상태 확인 실패:', error);
@@ -191,17 +219,16 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'timer.html';
   });
 
-  // ---------- 실시간 상태 갱신 (로컬 데이터, 1초마다) ----------
-  setInterval(function () {
-    studyData = loadData();
-    renderCalendar();
-    renderStatsPreview();
-    updateMatchProgressUI();
-    updateNextInfoUI();
-  }, 1000);
+  // ---------- 타이머 진행 상태 갱신 (로컬 데이터, 1초마다) ----------
+  setInterval(updateNextInfoUI, 1000);
 
-  // ---------- 오늘 경기 완료 여부 갱신 (서버에 물어보는 거라 5초마다) ----------
-  setInterval(checkTodayFinishedOnServer, 5000);
+  // ---------- 공부 기록 갱신 (서버에 물어보는 거라 5초마다) ----------
+  setInterval(loadStudyDataFromServer, 5000);
+
+  // 타이머 화면에서 '뒤로 가기'로 돌아왔을 때도 바로 새 기록을 받아옵니다.
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) loadStudyDataFromServer();
+  });
 
   // ---------- 도움말 팝업 ----------
   function openHelp() { helpOverlay.hidden = false; }
@@ -248,9 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key === 'Escape' && !settingsOverlay.hidden) closeSettings();
   });
 
-  renderCalendar();
-  renderStatsPreview();
-  updateMatchProgressUI();
-  updateNextInfoUI();
-  checkTodayFinishedOnServer();
+  renderAll();
+  loadStudyDataFromServer();
 });
