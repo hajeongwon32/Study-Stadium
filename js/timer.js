@@ -37,7 +37,7 @@ if (!session) {
         const timerStatus = document.querySelector('#timer-status');
         const toggleTimerButton = document.querySelector('#toggle-timer');
         const finishTodayButton = document.querySelector('#finish-today');
-        const logoutButton = document.querySelector('#logout-button');
+        const backButton = document.querySelector('#back-button');
         const modeLabel = document.querySelector('#mode-label');
         const timerTitleText = document.querySelector('#timer-title-text');
         const breakStepTitle = document.querySelector('#break-step-title');
@@ -527,17 +527,15 @@ if (!session) {
             }
         });
 
-        logoutButton.addEventListener('click', async () => {
-            logoutButton.disabled = true;
-            const { error } = await supabase.auth.signOut();
+        // 메인 화면으로 돌아갑니다. 진행 중인 세트는 저장되지 않으니 한 번 확인합니다.
+        backButton.addEventListener('click', () => {
+            const isSetInProgress = mode === 'study' && hasStartedCurrentSet && !isMatchFinished;
 
-            if (error) {
-                logoutButton.disabled = false;
-                alert('로그아웃에 실패했습니다. 다시 시도해 주세요.');
+            if (isSetInProgress && !confirm('진행 중인 세트는 저장되지 않아요. 메인 화면으로 돌아갈까요?')) {
                 return;
             }
 
-            window.location.replace('login.html');
+            window.location.href = 'studyStadium_main.html';
         });
 
         /* =========================
