@@ -71,7 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // - 그 외(오늘을 끝낸 오늘 칸, 또는 오늘 이전 칸): 클릭 가능
         const isFutureDay = dateKey > todayKey;
         const isTodayCell = dateKey === todayKey;
-        const canOpenDay = !isFutureDay && (!isTodayCell || todayFinishedOnServer);
+        const isTodayDone = todayFinishedOnServer || sets >= MAX_SETS;
+        const canOpenDay = !isFutureDay && (!isTodayCell || isTodayDone);
         if (canOpenDay) {
           cell.classList.add('clickable');
         }

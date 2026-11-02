@@ -288,6 +288,12 @@ if (!session) {
             }
 
             if (currentSet === 4) {
+                // 4세트를 다 채워도 '오늘 종료'와 똑같이 오늘 기록을 완료 상태로 저장합니다.
+                try {
+                    await markTodayStudyFinished(session.user.id);
+                } catch (error) {
+                    console.error('오늘 공부 종료 처리 실패:', error);
+                }
                 finishMatch();
             }
         };
