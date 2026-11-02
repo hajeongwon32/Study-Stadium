@@ -13,10 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const matchProgressLabel = document.getElementById('matchProgressLabel');
   const kickoffBtn = document.getElementById('kickoffBtn');
 
-  const statTotalSets = document.getElementById('statTotalSets');
-  const statFocusTime = document.getElementById('statFocusTime');
-  const statMatchDays = document.getElementById('statMatchDays');
+  const statTodayTime = document.getElementById('statTodayTime');
   const statStreak = document.getElementById('statStreak');
+  const statWeekSets = document.getElementById('statWeekSets');
 
   const helpBtn = document.getElementById('helpBtn');
   const helpOverlay = document.getElementById('helpOverlay');
@@ -94,14 +93,27 @@ document.addEventListener('DOMContentLoaded', function () {
     renderCalendar();
   });
 
-  // ---------- 통계 미리보기 (메인 화면 하단) ----------
-  //통계화면과 연동이 안 됨 실시간 화 할 것
+  // ---------- 오늘 기준 요약 (누적 통계는 통계 화면에서 보여줌) ----------
+  // 이번 주 = 월요일부터 오늘까지
+  function getWeekSets(data) {
+    const cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    const daysFromMonday = (cursor.getDay() + 6) % 7;
+    let weekSets = 0;
+    for (let i = 0; i <= daysFromMonday; i++) {
+      const record = data[formatDateKey(cursor)];
+      if (record) weekSets += record.sets || 0;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return weekSets;
+  }
+
   function renderStatsPreview() {
     const stats = computeStats(studyData, settings);
-    statTotalSets.textContent = stats.totalSets;
-    statFocusTime.textContent = stats.totalTimeLabel;
-    statMatchDays.textContent = stats.matchDays;
-    statStreak.textContent = stats.streak;
+    const todayMinutes = getTodayRecord(studyData).minutes || 0;
+    statTodayTime.textContent = pad2(Math.floor(todayMinutes / 60)) + 'H ' + pad2(todayMinutes % 60) + 'M';
+    statStreak.textContent = stats.streak + ' DAYS';
+    statWeekSets.textContent = getWeekSets(studyData);
   }
 
   // ---------- 오늘의 경기 진행 상황 텍스트 갱신 ----------
