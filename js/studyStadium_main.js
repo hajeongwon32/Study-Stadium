@@ -127,23 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // ---------- 안내 문구(NEXT) + 경기하러 가기 버튼 상태 갱신 ----------
   function updateNextInfoUI() {
     const todaySets = getTodayRecord(studyData).sets;
-    const timerStatus = loadTimerStatus();
 
     if (todayFinishedOnServer || todaySets >= MAX_SETS) {
       matchNextTitle.textContent = '오늘 경기 종료 (FULL TIME)';
       matchNextDesc.textContent = '오늘의 공부를 마쳤어요. 내일 또 만나요!';
       kickoffBtn.disabled = true;
       kickoffBtn.textContent = '오늘 완료';
-    } else if (timerStatus.phase === 'focus') {
-      matchNextTitle.textContent = '집중 중 (진행 중)';
-      matchNextDesc.textContent = '타이머 화면에서 집중하고 있어요. 화이팅!';
-      kickoffBtn.disabled = true;
-      kickoffBtn.textContent = '경기 진행 중';
-    } else if (timerStatus.phase === 'break') {
-      matchNextTitle.textContent = '브레이크 타임';
-      matchNextDesc.textContent = '잠깐 쉬는 중이에요. 곧 다음 세트가 시작돼요.';
-      kickoffBtn.disabled = true;
-      kickoffBtn.textContent = '경기 진행 중';
     } else {
       matchNextTitle.textContent = '킥오프 준비 완료';
       matchNextDesc.textContent = '버튼을 눌러 오늘의 경기를 시작해보세요';
@@ -214,9 +203,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (kickoffBtn.disabled) return;
     window.location.href = 'timer.html';
   });
-
-  // ---------- 타이머 진행 상태 갱신 (로컬 데이터, 1초마다) ----------
-  setInterval(updateNextInfoUI, 1000);
 
   // ---------- 공부 기록 갱신 (서버에 물어보는 거라 5초마다) ----------
   setInterval(loadStudyDataFromServer, 5000);

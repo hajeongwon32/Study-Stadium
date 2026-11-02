@@ -39,23 +39,6 @@ function getBreakSeconds(settings) {
   return settings.breakMinutes * 60;
 }
 
-// ------------------- 타이머 진행 상태 (정원이의 타이머 화면과 공유) -------------------
-// 실제 타이머는 정원이가 만드는 타이머 화면에서 돌아가고,
-// 메인 화면은 여기 저장된 값만 읽어서 "지금 집중 중인지/쉬는 중인지" 보여줍니다.
-const TIMER_STATUS_KEY = 'studyStadiumTimerStatus';
-
-// phase: 'focus'(집중 중) | 'break'(휴식 중) | null(대기 중, 아직 시작 안 함)
-function loadTimerStatus() {
-  const saved = localStorage.getItem(TIMER_STATUS_KEY);
-  if (!saved) return { phase: null };
-  return JSON.parse(saved);
-}
-
-// 타이머 화면 쪽에서 상태가 바뀔 때마다 이 함수로 저장해주면 됨
-function saveTimerStatus(status) {
-  localStorage.setItem(TIMER_STATUS_KEY, JSON.stringify(status));
-}
-
 // ------------------- 공부 기록 데이터 -------------------
 
 function loadData() {
