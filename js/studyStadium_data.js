@@ -1,8 +1,8 @@
 const STORAGE_KEY = 'studyStadiumData';       // 공부 기록 저장할 때 쓰는 이름표
 const SETTINGS_KEY = 'studyStadiumSettings';  // 집중/휴식 시간 설정 저장할 때 쓰는 이름표
 
-//50분 집중 / 10분 휴식으로 변경, 조절도 가능하게.
-const DEFAULT_FOCUS_MINUTES = 50;
+// 기본은 25분 집중 / 10분 휴식이며, 필요하면 조절할 수 있습니다.
+const DEFAULT_FOCUS_MINUTES = 25;
 const DEFAULT_BREAK_MINUTES = 10;
 const MAX_SETS = 4; // 하루에 채울 수 있는 최대 세트 수
 
