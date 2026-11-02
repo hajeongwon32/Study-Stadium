@@ -17,6 +17,7 @@
   --text-faint-2: #7B8781;
   --track-2: #F0F1F0;
   --sun: #9A4D55;
+  --sat: #4A6FA5;
 
   --radius-lg: 20px;
   --radius-md: 16px;
@@ -194,6 +195,7 @@ body {
   color: var(--text-muted);
 }
 .weekday-row span.sun { color: var(--sun); }
+.weekday-row span.sat { color: var(--sat); }
 
 .calendar-grid {
   display: grid;
