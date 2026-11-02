@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const dateKey = formatDateKey(cellDate);
         const record = studyData[dateKey];
         const sets = record ? record.sets : 0;
-        cell.classList.add(getStageKey(sets));
+        // 아직 오지 않은 날은 흙이 아니라 빈 칸으로 둡니다
+        cell.classList.add(dateKey > todayKey ? 'future' : getStageKey(sets));
         cell.dataset.date = dateKey;
 
         if (dateKey === todayKey) {

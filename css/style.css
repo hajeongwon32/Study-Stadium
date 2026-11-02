@@ -219,6 +219,13 @@ body {
 .calendar-cell.leaf { background: var(--leaf); }
 .calendar-cell.stadium { background: var(--stadium); }
 
+/* 아직 오지 않은 날: 색칠하지 않은 빈 칸 */
+.calendar-cell.future {
+  background: var(--track-2);
+  outline: 1px dashed var(--line);
+  outline-offset: -1px;
+}
+
 /* 이번 달이 아닌 칸: 코너플래그로 표시 */
 .calendar-cell.empty {
   background: var(--stadium);
