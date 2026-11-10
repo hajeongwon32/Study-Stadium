@@ -8,3 +8,6 @@
 Thumbs.db
 .vscode/
 .idea/
+
+# 배포용 파일 복사본
+/deploy/
